@@ -1,14 +1,14 @@
-# Application Name
-
-Rename the above with the name of your application.
+# Yoere
 
 # Overview
 
-Add an overview of your application here.
+A text-based escape room game
 
 # Team Members
 
-Add the team member names who are working on this application.
++Zach Schwartz
++Thomas Capen
++Andrew Hoener
 
 # Application Initialization
 
