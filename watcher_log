@@ -1,0 +1,21 @@
+
+> ch01@1.0.0 watch /home/drew/CS326/final
+> babel src --presets react,es2015 --out-dir static --watch
+
+src/App01.jsx -> static/App01.js
+src/App02.jsx -> static/App02.js
+src/App03.jsx -> static/App03.js
+
+> ch01@1.0.0 watch /home/drew/CS326/final
+> babel src --presets react,es2015 --out-dir static --watch
+
+src/App01.jsx -> static/App01.js
+src/App02.jsx -> static/App02.js
+src/App03.jsx -> static/App03.js
+
+> ch01@1.0.0 watch /home/drew/CS326/final
+> babel src --presets react,es2015 --out-dir static --watch
+
+src/App01.jsx -> static/App01.js
+src/App02.jsx -> static/App02.js
+src/App03.jsx -> static/App03.js
