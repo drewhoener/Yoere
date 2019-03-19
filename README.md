@@ -6,9 +6,9 @@ A text-based escape room game
 
 # Team Members
 
-+Zach Schwartz
-+Thomas Capen
-+Andrew Hoener
++ Zach Schwartz
++ Thomas Capen
++ Andrew Hoener
 
 # Application Initialization
 
