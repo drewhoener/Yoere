@@ -19,10 +19,10 @@ var inputNode = document.getElementById("input");
 var MyComponent = function (_React$Component) {
     _inherits(MyComponent, _React$Component);
 
-    function MyComponent() {
+    function MyComponent(props) {
         _classCallCheck(this, MyComponent);
 
-        return _possibleConstructorReturn(this, (MyComponent.__proto__ || Object.getPrototypeOf(MyComponent)).call(this));
+        return _possibleConstructorReturn(this, (MyComponent.__proto__ || Object.getPrototypeOf(MyComponent)).call(this, props));
     }
 
     _createClass(MyComponent, [{
@@ -51,16 +51,18 @@ var MyComponent = function (_React$Component) {
 var TextForm = function (_React$Component2) {
     _inherits(TextForm, _React$Component2);
 
-    function TextForm() {
+    function TextForm(props) {
         _classCallCheck(this, TextForm);
 
-        return _possibleConstructorReturn(this, (TextForm.__proto__ || Object.getPrototypeOf(TextForm)).call(this));
+        var _this2 = _possibleConstructorReturn(this, (TextForm.__proto__ || Object.getPrototypeOf(TextForm)).call(this, props));
+
+        console.log(props);
+        console.log(_this2.props);
+        console.log(_this2.state);
+        return _this2;
     }
 
     _createClass(TextForm, [{
-        key: "handleSubmit",
-        value: function handleSubmit(e) {}
-    }, {
         key: "render",
         value: function render() {
             return React.createElement(
@@ -68,11 +70,12 @@ var TextForm = function (_React$Component2) {
                 null,
                 React.createElement(
                     "form",
-                    { name: "commandInput", onSubmit: this.handleSubmit },
+                    { name: "commandForm", onSubmit: this.props.submitHandler },
                     React.createElement(
                         "div",
                         { className: "form-group" },
-                        React.createElement("input", { type: "command", className: "form-control", id: "commandInput", "aria-describedby": "commandhelp",
+                        React.createElement("input", { type: "text", name: "command", className: "form-control", id: "commandInput",
+                            "aria-describedby": "commandhelp",
                             placeholder: "Enter a command..." })
                     )
                 )
@@ -92,26 +95,79 @@ var BreadCrumb = function (_React$Component3) {
         return _possibleConstructorReturn(this, (BreadCrumb.__proto__ || Object.getPrototypeOf(BreadCrumb)).apply(this, arguments));
     }
 
+    _createClass(BreadCrumb, [{
+        key: "render",
+        value: function render() {
+            var list = this.props.elements.map(function (command, index) {
+                return React.createElement(
+                    "span",
+                    { key: index },
+                    command,
+                    React.createElement("br", null)
+                );
+            });
+            return React.createElement(
+                "p",
+                null,
+                list
+            );
+        }
+    }]);
+
     return BreadCrumb;
 }(React.Component);
 
 var InputView = function (_React$Component4) {
     _inherits(InputView, _React$Component4);
 
-    function InputView() {
+    function InputView(props) {
         _classCallCheck(this, InputView);
 
-        return _possibleConstructorReturn(this, (InputView.__proto__ || Object.getPrototypeOf(InputView)).call(this));
+        var _this4 = _possibleConstructorReturn(this, (InputView.__proto__ || Object.getPrototypeOf(InputView)).call(this, props));
+
+        _this4.state = {
+            previous: []
+        };
+        _this4.add_command = _this4.add_command.bind(_this4);
+        _this4.formSubmit = _this4.formSubmit.bind(_this4);
+        _this4.textform = React.createElement(TextForm, { submitHandler: _this4.formSubmit });
+        return _this4;
     }
 
     _createClass(InputView, [{
+        key: "add_command",
+        value: function add_command(command) {
+            this.setState(function (state) {
+                var newList = state.previous.concat(command).filter(function (val, index, arr) {
+                    if (arr.length > 4) return index >= arr.length - 4;
+                    return true;
+                });
+                return {
+                    previous: newList
+                };
+            });
+        }
+    }, {
+        key: "formSubmit",
+        value: function formSubmit(e) {
+            e.preventDefault();
+            var input = document.forms.commandForm;
+            this.add_command(input.command.value);
+            input.command.value = '';
+        }
+    }, {
         key: "render",
         value: function render() {
+            console.log(this.state.previous);
             return React.createElement(
                 "div",
                 { className: "fixed-bottom" },
-                React.createElement(BreadCrumb, null),
-                React.createElement(TextForm, null)
+                React.createElement(
+                    "div",
+                    { className: "gradient-background" },
+                    React.createElement(BreadCrumb, { elements: this.state.previous })
+                ),
+                this.textform
             );
         }
     }]);
