@@ -9,43 +9,49 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 // This is a place holder for the initial application state.
+//TODO remove debug
 
 var state = [];
+var BREADCRUMB_MAX = 6;
 
 // This grabs the DOM element to be used to mount React components.
 var contentNode = document.getElementById("contents");
-var inputNode = document.getElementById("input");
 
-var MyComponent = function (_React$Component) {
-    _inherits(MyComponent, _React$Component);
+var EscapeView = function (_React$Component) {
+    _inherits(EscapeView, _React$Component);
 
-    function MyComponent(props) {
-        _classCallCheck(this, MyComponent);
+    function EscapeView(props) {
+        _classCallCheck(this, EscapeView);
 
-        return _possibleConstructorReturn(this, (MyComponent.__proto__ || Object.getPrototypeOf(MyComponent)).call(this, props));
+        return _possibleConstructorReturn(this, (EscapeView.__proto__ || Object.getPrototypeOf(EscapeView)).call(this, props));
     }
 
-    _createClass(MyComponent, [{
+    _createClass(EscapeView, [{
         key: "render",
         value: function render() {
             return React.createElement(
                 "div",
-                null,
+                {className: "container"},
                 React.createElement(
-                    "h1",
+                    "div",
                     null,
-                    "My View 01"
+                    React.createElement(
+                        "h1",
+                        null,
+                        "My View 01"
+                    ),
+                    React.createElement(
+                        "h3",
+                        null,
+                        " Build On Pull Test "
+                    )
                 ),
-                React.createElement(
-                    "h3",
-                    null,
-                    " Build On Pull Test "
-                )
+                React.createElement(InputView, null)
             );
         }
     }]);
 
-    return MyComponent;
+    return EscapeView;
 }(React.Component);
 
 var TextForm = function (_React$Component2) {
@@ -54,12 +60,7 @@ var TextForm = function (_React$Component2) {
     function TextForm(props) {
         _classCallCheck(this, TextForm);
 
-        var _this2 = _possibleConstructorReturn(this, (TextForm.__proto__ || Object.getPrototypeOf(TextForm)).call(this, props));
-
-        console.log(props);
-        console.log(_this2.props);
-        console.log(_this2.state);
-        return _this2;
+        return _possibleConstructorReturn(this, (TextForm.__proto__ || Object.getPrototypeOf(TextForm)).call(this, props));
     }
 
     _createClass(TextForm, [{
@@ -76,7 +77,8 @@ var TextForm = function (_React$Component2) {
                         { className: "form-group" },
                         React.createElement("input", { type: "text", name: "command", className: "form-control", id: "commandInput",
                             "aria-describedby": "commandhelp",
-                            placeholder: "Enter a command..." })
+                            placeholder: "Enter a command...", autoComplete: "off"
+                        })
                     )
                 )
             );
@@ -86,74 +88,58 @@ var TextForm = function (_React$Component2) {
     return TextForm;
 }(React.Component);
 
-var BreadCrumb = function (_React$Component3) {
-    _inherits(BreadCrumb, _React$Component3);
-
-    function BreadCrumb() {
-        _classCallCheck(this, BreadCrumb);
-
-        return _possibleConstructorReturn(this, (BreadCrumb.__proto__ || Object.getPrototypeOf(BreadCrumb)).apply(this, arguments));
-    }
-
-    _createClass(BreadCrumb, [{
-        key: "render",
-        value: function render() {
-            var list = this.props.elements.map(function (command, index) {
-                return React.createElement(
-                    "span",
-                    { key: index },
-                    command,
-                    React.createElement("br", null)
-                );
-            });
-            return React.createElement(
-                "p",
-                null,
-                list
-            );
-        }
-    }]);
-
-    return BreadCrumb;
-}(React.Component);
-
-var InputView = function (_React$Component4) {
-    _inherits(InputView, _React$Component4);
+var InputView = function (_React$Component3) {
+    _inherits(InputView, _React$Component3);
 
     function InputView(props) {
         _classCallCheck(this, InputView);
 
-        var _this4 = _possibleConstructorReturn(this, (InputView.__proto__ || Object.getPrototypeOf(InputView)).call(this, props));
+        var _this3 = _possibleConstructorReturn(this, (InputView.__proto__ || Object.getPrototypeOf(InputView)).call(this, props));
 
-        _this4.state = {
-            previous: []
+        _this3.state = {
+            previous: [],
+            breadcrumb_id: 0
         };
-        _this4.add_command = _this4.add_command.bind(_this4);
-        _this4.formSubmit = _this4.formSubmit.bind(_this4);
-        _this4.textform = React.createElement(TextForm, { submitHandler: _this4.formSubmit });
-        return _this4;
+        _this3.add_command = _this3.add_command.bind(_this3);
+        _this3.formSubmit = _this3.formSubmit.bind(_this3);
+        _this3.add_response = _this3.add_response.bind(_this3);
+        return _this3;
     }
 
     _createClass(InputView, [{
         key: "add_command",
-        value: function add_command(command) {
+        value: function add_command(command, isResponse) {
             this.setState(function (state) {
-                var newList = state.previous.concat(command).filter(function (val, index, arr) {
-                    if (arr.length > 4) return index >= arr.length - 4;
+                var breadcrumb_id = state.breadcrumb_id;
+                var newList = state.previous.concat(React.createElement(
+                    "span",
+                    {key: state.breadcrumb_id, className: isResponse ? "command-response" : "command"},
+                    command,
+                    React.createElement("br", null)
+                )).filter(function (val, index, arr) {
+                    if (arr.length > BREADCRUMB_MAX) return index >= arr.length - BREADCRUMB_MAX;
                     return true;
                 });
                 return {
-                    previous: newList
+                    previous: newList,
+                    breadcrumb_id: breadcrumb_id + 1
                 };
             });
+        }
+    }, {
+        key: "add_response",
+        value: function add_response(response) {
+            this.add_command(response, true);
         }
     }, {
         key: "formSubmit",
         value: function formSubmit(e) {
             e.preventDefault();
             var input = document.forms.commandForm;
-            this.add_command(input.command.value);
+            var str = input.command.value;
+            this.add_command(str);
             input.command.value = '';
+            this.add_response("The void greets you " + this.state.breadcrumb_id);
         }
     }, {
         key: "render",
@@ -165,9 +151,9 @@ var InputView = function (_React$Component4) {
                 React.createElement(
                     "div",
                     { className: "gradient-background" },
-                    React.createElement(BreadCrumb, { elements: this.state.previous })
+                    this.state.previous
                 ),
-                this.textform
+                React.createElement(TextForm, {submitHandler: this.formSubmit})
             );
         }
     }]);
@@ -178,5 +164,4 @@ var InputView = function (_React$Component4) {
 // This renders the JSX component inside the content node:
 
 
-ReactDOM.render(React.createElement(MyComponent, null), contentNode);
-ReactDOM.render(React.createElement(InputView, null), inputNode);
+ReactDOM.render(React.createElement(EscapeView, null), contentNode);

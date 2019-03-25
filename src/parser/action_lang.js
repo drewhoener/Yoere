@@ -5,8 +5,18 @@ const LANG = {
     hear: ["listen", "hear",],
 };
 
-let generate_pairs = (str) => {
-    str = str.replace(/,|, |\.|\. |/g, "");
+export const strip_input = (str) => {
+    //Pesky characters
+    let stripped = str.replace(/[.,\/#!$%&\*;:{}=\-_`~()]/g, "");
+    //Remove extra space
+    stripped = stripped.replace(/\s{2,}/g, " ");
+    //https://stackoverflow.com/questions/20856197/remove-non-ascii-character-in-string for character ranges
+    stripped = stripped.replace(/[^\x00-\x7F]/g, "");
+    return stripped;
+};
+
+export const generate_pairs = (str) => {
+    str = strip_input(str);
     let split = str.split(" ");
 
 };

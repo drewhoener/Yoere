@@ -1,21 +1,25 @@
 // This is a place holder for the initial application state.
+//TODO remove debug
 
 const state = [];
+const BREADCRUMB_MAX = 6;
 
 // This grabs the DOM element to be used to mount React components.
-var contentNode = document.getElementById("contents");
-var inputNode = document.getElementById("input");
+const contentNode = document.getElementById("contents");
 
-class MyComponent extends React.Component {
+class EscapeView extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {
         return (
-            <div>
-                <h1>My View 01</h1>
-                <h3> Build On Pull Test </h3>
+            <div className="container">
+                <div>
+                    <h1>My View 01</h1>
+                    <h3> Build On Pull Test </h3>
+                </div>
+                <InputView/>
             </div>
         );
     }
@@ -25,9 +29,6 @@ class TextForm extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log(props);
-        console.log(this.props);
-        console.log(this.state);
     }
 
     render() {
@@ -37,26 +38,11 @@ class TextForm extends React.Component {
                     <div className="form-group">
                         <input type="text" name="command" className="form-control" id="commandInput"
                                aria-describedby="commandhelp"
-                               placeholder="Enter a command..."/>
+                               placeholder="Enter a command..." autoComplete="off"/>
                     </div>
                 </form>
             </div>
         );
-    }
-}
-
-class BreadCrumb extends React.Component {
-    render() {
-        const list = this.props.elements.map((command, index) => {
-            return (
-                <span key={index}>{command}<br/></span>
-            );
-        });
-        return (
-            <p>
-                {list}
-            </p>
-        )
     }
 }
 
@@ -66,31 +52,42 @@ class InputView extends React.Component {
         super(props);
 
         this.state = {
-            previous: []
+            previous: [],
+            breadcrumb_id: 0
         };
         this.add_command = this.add_command.bind(this);
         this.formSubmit = this.formSubmit.bind(this);
-        this.textform = <TextForm submitHandler={this.formSubmit}/>;
+        this.add_response = this.add_response.bind(this);
     }
 
-    add_command(command) {
-        this.setState(state => {
-            const newList = state.previous.concat(command).filter((val, index, arr) => {
-                if (arr.length > 4)
-                    return index >= arr.length - 4;
+    add_command(command, isResponse) {
+        this.setState((state) => {
+            const breadcrumb_id = state.breadcrumb_id;
+            const newList = state.previous.concat(
+                <span key={state.breadcrumb_id} className={(isResponse ? "command-response" : "command")}>{command}<br/></span>
+            ).filter((val, index, arr) => {
+                if (arr.length > BREADCRUMB_MAX)
+                    return index >= arr.length - BREADCRUMB_MAX;
                 return true;
             });
             return {
-                previous: newList
+                previous: newList,
+                breadcrumb_id: breadcrumb_id + 1
             };
         });
+    };
+
+    add_response(response) {
+        this.add_command(response, true);
     };
 
     formSubmit(e) {
         e.preventDefault();
         let input = document.forms.commandForm;
-        this.add_command(input.command.value);
+        let str = input.command.value;
+        this.add_command(str);
         input.command.value = '';
+        this.add_response("The void greets you " + this.state.breadcrumb_id);
     }
 
     render() {
@@ -98,9 +95,9 @@ class InputView extends React.Component {
         return (
             <div className="fixed-bottom">
                 <div className="gradient-background">
-                    <BreadCrumb elements={this.state.previous}/>
+                    {this.state.previous}
                 </div>
-                {this.textform}
+                <TextForm submitHandler={this.formSubmit}/>
             </div>
         );
     }
@@ -109,6 +106,4 @@ class InputView extends React.Component {
 
 
 // This renders the JSX component inside the content node:
-ReactDOM.render(<MyComponent/>, contentNode);
-ReactDOM.render(<InputView/>, inputNode);
-
+ReactDOM.render(<EscapeView/>, contentNode);
