@@ -11,7 +11,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // This is a place holder for the initial application state.
 //TODO remove debug
 
-var state = [];
 var BREADCRUMB_MAX = 12;
 
 // This grabs the DOM element to be used to mount React components.
@@ -102,14 +101,14 @@ var InputView = function (_React$Component3) {
         };
         _this3.add_command = _this3.add_command.bind(_this3);
         _this3.formSubmit = _this3.formSubmit.bind(_this3);
-        _this3.scrollRef = undefined;
+        _this3.scrollRef = null;
         return _this3;
     }
 
     _createClass(InputView, [{
         key: "componentDidUpdate",
         value: function componentDidUpdate() {
-            this.scrollRef.scrollIntoView({behavior: 'smooth'});
+            if (this.scrollRef) this.scrollRef.scrollIntoView({behavior: 'smooth'});
         }
     }, {
         key: "add_command",
@@ -139,7 +138,7 @@ var InputView = function (_React$Component3) {
             var str = input.command.value;
             this.add_command(str);
             input.command.value = '';
-            this.add_command("The void greets you " + this.state.breadcrumb_id, true);
+            this.add_command("Test response " + this.state.breadcrumb_id, true);
         }
     }, {
         key: "render",

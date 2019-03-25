@@ -1,7 +1,6 @@
 // This is a place holder for the initial application state.
 //TODO remove debug
 
-const state = [];
 const BREADCRUMB_MAX = 12;
 
 // This grabs the DOM element to be used to mount React components.
@@ -60,12 +59,12 @@ class InputView extends React.Component {
         this.scrollRef = null;
     }
 
-    componentDidUpdate = () => {
+    componentDidUpdate() {
         if (this.scrollRef)
             this.scrollRef.scrollIntoView({behavior: 'smooth'});
     };
 
-    add_command = (command, isResponse) => {
+    add_command(command, isResponse) {
         this.setState((state) => {
             const breadcrumb_id = state.breadcrumb_id;
             const newList = state.previous.concat(
@@ -82,13 +81,13 @@ class InputView extends React.Component {
         });
     };
 
-    formSubmit = e => {
+    formSubmit(e) {
         e.preventDefault();
         let input = document.forms.commandForm;
         let str = input.command.value;
         this.add_command(str);
         input.command.value = '';
-        this.add_command("The void greets you " + this.state.breadcrumb_id, true);
+        this.add_command("Test response " + this.state.breadcrumb_id, true);
     };
 
     render() {
