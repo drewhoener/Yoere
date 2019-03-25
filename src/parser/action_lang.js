@@ -1,8 +1,8 @@
 //Lang Object, holds generic types
 const LANG = {
-    see: ["see", "look", "examine", "observe", "glance"],
+    examine: ["see", "look", "examine", "observe", "glance"],
     touch: ["touch", "feel", "examine", "pick up", "wipe"],
-    hear: ["listen", "hear",],
+    listen: ["listen", "hear",],
 };
 
 export const strip_input = (str) => {

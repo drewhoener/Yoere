@@ -2,7 +2,7 @@
 //TODO remove debug
 
 const state = [];
-const BREADCRUMB_MAX = 6;
+const BREADCRUMB_MAX = 12;
 
 // This grabs the DOM element to be used to mount React components.
 const contentNode = document.getElementById("contents");
@@ -57,10 +57,15 @@ class InputView extends React.Component {
         };
         this.add_command = this.add_command.bind(this);
         this.formSubmit = this.formSubmit.bind(this);
-        this.add_response = this.add_response.bind(this);
+        this.scrollRef = null;
     }
 
-    add_command(command, isResponse) {
+    componentDidUpdate = () => {
+        if (this.scrollRef)
+            this.scrollRef.scrollIntoView({behavior: 'smooth'});
+    };
+
+    add_command = (command, isResponse) => {
         this.setState((state) => {
             const breadcrumb_id = state.breadcrumb_id;
             const newList = state.previous.concat(
@@ -77,25 +82,22 @@ class InputView extends React.Component {
         });
     };
 
-    add_response(response) {
-        this.add_command(response, true);
-    };
-
-    formSubmit(e) {
+    formSubmit = e => {
         e.preventDefault();
         let input = document.forms.commandForm;
         let str = input.command.value;
         this.add_command(str);
         input.command.value = '';
-        this.add_response("The void greets you " + this.state.breadcrumb_id);
-    }
+        this.add_command("The void greets you " + this.state.breadcrumb_id, true);
+    };
 
     render() {
-        console.log(this.state.previous);
+        //console.log(this.state.previous);
         return (
             <div className="fixed-bottom">
                 <div className="gradient-background">
                     {this.state.previous}
+                    <div ref={(ref) => this.scrollRef = ref}/>
                 </div>
                 <TextForm submitHandler={this.formSubmit}/>
             </div>
@@ -103,7 +105,6 @@ class InputView extends React.Component {
     }
 
 }
-
 
 // This renders the JSX component inside the content node:
 ReactDOM.render(<EscapeView/>, contentNode);

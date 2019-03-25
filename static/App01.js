@@ -12,7 +12,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 //TODO remove debug
 
 var state = [];
-var BREADCRUMB_MAX = 6;
+var BREADCRUMB_MAX = 12;
 
 // This grabs the DOM element to be used to mount React components.
 var contentNode = document.getElementById("contents");
@@ -102,11 +102,16 @@ var InputView = function (_React$Component3) {
         };
         _this3.add_command = _this3.add_command.bind(_this3);
         _this3.formSubmit = _this3.formSubmit.bind(_this3);
-        _this3.add_response = _this3.add_response.bind(_this3);
+        _this3.scrollRef = undefined;
         return _this3;
     }
 
     _createClass(InputView, [{
+        key: "componentDidUpdate",
+        value: function componentDidUpdate() {
+            this.scrollRef.scrollIntoView({behavior: 'smooth'});
+        }
+    }, {
         key: "add_command",
         value: function add_command(command, isResponse) {
             this.setState(function (state) {
@@ -127,11 +132,6 @@ var InputView = function (_React$Component3) {
             });
         }
     }, {
-        key: "add_response",
-        value: function add_response(response) {
-            this.add_command(response, true);
-        }
-    }, {
         key: "formSubmit",
         value: function formSubmit(e) {
             e.preventDefault();
@@ -139,19 +139,26 @@ var InputView = function (_React$Component3) {
             var str = input.command.value;
             this.add_command(str);
             input.command.value = '';
-            this.add_response("The void greets you " + this.state.breadcrumb_id);
+            this.add_command("The void greets you " + this.state.breadcrumb_id, true);
         }
     }, {
         key: "render",
         value: function render() {
-            console.log(this.state.previous);
+            var _this4 = this;
+
+            //console.log(this.state.previous);
             return React.createElement(
                 "div",
                 { className: "fixed-bottom" },
                 React.createElement(
                     "div",
                     { className: "gradient-background" },
-                    this.state.previous
+                    this.state.previous,
+                    React.createElement("div", {
+                        ref: function ref(_ref) {
+                            return _this4.scrollRef = _ref;
+                        }
+                    })
                 ),
                 React.createElement(TextForm, {submitHandler: this.formSubmit})
             );
