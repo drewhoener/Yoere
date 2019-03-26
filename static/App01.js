@@ -8,13 +8,86 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-// This is a place holder for the initial application state.
 //TODO remove debug
-
 var BREADCRUMB_MAX = 12;
 
 // This grabs the DOM element to be used to mount React components.
 var contentNode = document.getElementById("contents");
+
+var LANG = {
+    prep: {
+        lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off"],
+        sub_lang: ["the", "a", "an", "of", "in"],
+        all: function all() {
+            return LANG.prep.lang.concat(LANG.prep.sub_lang);
+        }
+    },
+    verb: {
+        examine: {
+            lang: ["see", "look", "examine", "observe", "glance"]
+        },
+        touch: {
+            lang: ["touch", "feel", "examine", "pick up", "wipe"]
+        },
+        listen: {
+            lang: ["listen", "hear"]
+        },
+        move: {
+            lang: ["move", "jump", "walk"]
+        }
+    }
+};
+
+var strip_input = function strip_input(str) {
+    //Pesky characters
+    var stripped = str.replace(/[.,\/#!$%&\*;:{}=\-_`~()]/g, "");
+    //Remove extra space
+    stripped = stripped.replace(/\s{2,}/g, " ");
+    //https://stackoverflow.com/questions/20856197/remove-non-ascii-character-in-string for character ranges
+    stripped = stripped.replace(/[^\x00-\x7F]/g, "");
+    return stripped.trim();
+};
+
+var generate_pairs = function generate_pairs(input) {
+    input = strip_input(input.toLowerCase());
+    var split = input.split(" ");
+    console.log(split);
+    var curSet = {
+        verb: null,
+        prep: [],
+        noun: null
+    };
+
+    restart: for (var splitKey in split) {
+        var word = split[splitKey];
+        console.log("Word is " + word);
+        if (!curSet.verb) {
+            console.log("Verb is null");
+            for (var verbKey in LANG.verb) {
+                console.log("Verbkey is " + verbKey);
+                console.log("Comparing " + word + " to elements of " + LANG.verb[verbKey].lang);
+                if (LANG.verb[verbKey].lang.includes(word)) {
+                    curSet.verb = verbKey;
+                    continue restart;
+                }
+            }
+        }
+        //console.log(LANG.prep.all());
+        if (LANG.prep.all().includes(word)) {
+            curSet.prep.push(word);
+            continue;
+        }
+
+        if (!curSet.noun) {
+            curSet.noun = word;
+        }
+        if (curSet.noun && curSet.verb) {
+            console.log("Found both");
+            break;
+        }
+    }
+    return curSet;
+};
 
 var EscapeView = function (_React$Component) {
     _inherits(EscapeView, _React$Component);
@@ -30,19 +103,23 @@ var EscapeView = function (_React$Component) {
         value: function render() {
             return React.createElement(
                 "div",
-                {className: "container"},
+                { className: "container" },
                 React.createElement(
                     "div",
-                    null,
+                    { className: "row" },
                     React.createElement(
-                        "h1",
-                        null,
-                        "My View 01"
-                    ),
-                    React.createElement(
-                        "h3",
-                        null,
-                        " Build On Pull Test "
+                        "div",
+                        { className: "col-md-4 offset-md-4 text-center" },
+                        React.createElement(
+                            "h1",
+                            null,
+                            "Yoere!"
+                        ),
+                        React.createElement(
+                            "h3",
+                            null,
+                            " Escape the Room "
+                        )
                     )
                 ),
                 React.createElement(InputView, null)
@@ -76,8 +153,7 @@ var TextForm = function (_React$Component2) {
                         { className: "form-group" },
                         React.createElement("input", { type: "text", name: "command", className: "form-control", id: "commandInput",
                             "aria-describedby": "commandhelp",
-                            placeholder: "Enter a command...", autoComplete: "off"
-                        })
+                            placeholder: "Enter a command...", autoComplete: "off" })
                     )
                 )
             );
@@ -108,7 +184,7 @@ var InputView = function (_React$Component3) {
     _createClass(InputView, [{
         key: "componentDidUpdate",
         value: function componentDidUpdate() {
-            if (this.scrollRef) this.scrollRef.scrollIntoView({behavior: 'smooth'});
+            if (this.scrollRef) this.scrollRef.scrollIntoView({ behavior: 'smooth' });
         }
     }, {
         key: "add_command",
@@ -117,7 +193,7 @@ var InputView = function (_React$Component3) {
                 var breadcrumb_id = state.breadcrumb_id;
                 var newList = state.previous.concat(React.createElement(
                     "span",
-                    {key: state.breadcrumb_id, className: isResponse ? "command-response" : "command"},
+                    { key: state.breadcrumb_id, className: isResponse ? "command-response" : "command" },
                     command,
                     React.createElement("br", null)
                 )).filter(function (val, index, arr) {
@@ -135,9 +211,11 @@ var InputView = function (_React$Component3) {
         value: function formSubmit(e) {
             e.preventDefault();
             var input = document.forms.commandForm;
-            var str = input.command.value;
+            var str = strip_input(input.command.value);
+            //alert(str);
             this.add_command(str);
             input.command.value = '';
+            console.log(generate_pairs(str));
             this.add_command("Test response " + this.state.breadcrumb_id, true);
         }
     }, {
@@ -153,13 +231,11 @@ var InputView = function (_React$Component3) {
                     "div",
                     { className: "gradient-background" },
                     this.state.previous,
-                    React.createElement("div", {
-                        ref: function ref(_ref) {
+                    React.createElement("div", { ref: function ref(_ref) {
                             return _this4.scrollRef = _ref;
-                        }
-                    })
+                        } })
                 ),
-                React.createElement(TextForm, {submitHandler: this.formSubmit})
+                React.createElement(TextForm, { submitHandler: this.formSubmit })
             );
         }
     }]);

@@ -1,10 +1,84 @@
-// This is a place holder for the initial application state.
 //TODO remove debug
-
 const BREADCRUMB_MAX = 12;
 
 // This grabs the DOM element to be used to mount React components.
 const contentNode = document.getElementById("contents");
+
+const LANG = {
+    prep: {
+        lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off"],
+        sub_lang: ["the", "a", "an", "of", "in"],
+        all: () => {
+            return LANG.prep.lang.concat(LANG.prep.sub_lang);
+        }
+    },
+    verb: {
+        examine: {
+            lang: ["see", "look", "examine", "observe", "glance"]
+        },
+        touch: {
+            lang: ["touch", "feel", "examine", "pick up", "wipe"]
+        },
+        listen: {
+            lang: ["listen", "hear"]
+        },
+        move: {
+            lang: ["move", "jump", "walk"]
+        }
+    }
+};
+
+const strip_input = (str) => {
+    //Pesky characters
+    let stripped = str.replace(/[.,\/#!$%&\*;:{}=\-_`~()]/g, "");
+    //Remove extra space
+    stripped = stripped.replace(/\s{2,}/g, " ");
+    //https://stackoverflow.com/questions/20856197/remove-non-ascii-character-in-string for character ranges
+    stripped = stripped.replace(/[^\x00-\x7F]/g, "");
+    return stripped.trim();
+};
+
+const generate_pairs = (input) => {
+    input = strip_input(input.toLowerCase());
+    let split = input.split(" ");
+    console.log(split);
+    const curSet = {
+        verb: null,
+        prep: [],
+        noun: null
+    };
+
+    restart:
+        for (let splitKey in split) {
+            let word = split[splitKey];
+            console.log("Word is " + word);
+            if (!curSet.verb) {
+                console.log("Verb is null");
+                for (let verbKey in LANG.verb) {
+                    console.log("Verbkey is " + verbKey);
+                    console.log("Comparing " + word + " to elements of " + LANG.verb[verbKey].lang);
+                    if (LANG.verb[verbKey].lang.includes(word)) {
+                        curSet.verb = verbKey;
+                        continue restart;
+                    }
+                }
+            }
+            //console.log(LANG.prep.all());
+            if (LANG.prep.all().includes(word)) {
+                curSet.prep.push(word);
+                continue;
+            }
+
+            if (!curSet.noun) {
+                curSet.noun = word;
+            }
+            if (curSet.noun && curSet.verb) {
+                console.log("Found both");
+                break;
+            }
+        }
+    return curSet;
+};
 
 class EscapeView extends React.Component {
     constructor(props) {
@@ -14,9 +88,11 @@ class EscapeView extends React.Component {
     render() {
         return (
             <div className="container">
-                <div>
-                    <h1>My View 01</h1>
-                    <h3> Build On Pull Test </h3>
+                <div className="row">
+                    <div className="col-md-4 offset-md-4 text-center">
+                        <h1>Yoere!</h1>
+                        <h3> Escape the Room </h3>
+                    </div>
                 </div>
                 <InputView/>
             </div>
@@ -84,9 +160,11 @@ class InputView extends React.Component {
     formSubmit(e) {
         e.preventDefault();
         let input = document.forms.commandForm;
-        let str = input.command.value;
+        let str = strip_input(input.command.value);
+        //alert(str);
         this.add_command(str);
         input.command.value = '';
+        console.log(generate_pairs(str));
         this.add_command("Test response " + this.state.breadcrumb_id, true);
     };
 
