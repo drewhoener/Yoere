@@ -24,21 +24,89 @@ var MyComponent = function (_React$Component) {
   }
 
   _createClass(MyComponent, [{
-    key: "render",
-    value: function render() {
-      return React.createElement(
-        "div",
-        null,
-        React.createElement(
-          "h1",
-          null,
-          "My View 02"
+      key: "render",
+      value: function render() {
+          return React.createElement(
+              "div",
+              null,
+              React.createElement(View, null)
+          );
+      }
+  }]);
+
+    return MyComponent;
+}(React.Component);
+
+var View = function (_React$Component2) {
+    _inherits(View, _React$Component2);
+
+    function View(props) {
+        _classCallCheck(this, View);
+
+        var _this2 = _possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).call(this, props));
+
+        _this2.state = {
+            shown: false
+        };
+        _this2.onClick = _this2.onClick.bind(_this2);
+        return _this2;
+    }
+
+    _createClass(View, [{
+        key: "onClick",
+        value: function onClick(e) {
+            e.preventDefault();
+            this.setState(function (state) {
+                var newShown = !state.shown;
+                return {
+                    shown: newShown
+                };
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                React.createElement(
+                    "button",
+                    {onClick: this.onClick},
+                    "Click Me!"
+                ),
+                React.createElement(StatsWindow, {shown: this.state.shown})
+            );
+        }
+    }]);
+
+    return View;
+}(React.Component);
+
+var StatsWindow = function (_React$Component3) {
+    _inherits(StatsWindow, _React$Component3);
+
+    function StatsWindow(props) {
+        _classCallCheck(this, StatsWindow);
+
+        return _possibleConstructorReturn(this, (StatsWindow.__proto__ || Object.getPrototypeOf(StatsWindow)).call(this, props));
+    }
+
+    _createClass(StatsWindow, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                this.props.shown && React.createElement(
+                "span",
+                null,
+                "Hello"
         )
       );
     }
   }]);
 
-  return MyComponent;
+    return StatsWindow;
 }(React.Component);
 
 // This renders the JSX component inside the content node:

@@ -16,8 +16,8 @@ var contentNode = document.getElementById("contents");
 
 var LANG = {
     prep: {
-        lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off"],
-        sub_lang: ["the", "a", "an", "of", "in"],
+        lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off", "open"],
+        sub_lang: ["the", "a", "an", "of", "in", "on"],
         all: function all() {
             return LANG.prep.lang.concat(LANG.prep.sub_lang);
         }
@@ -27,7 +27,7 @@ var LANG = {
             lang: ["see", "look", "examine", "observe", "glance"]
         },
         touch: {
-            lang: ["touch", "feel", "examine", "pick up", "wipe"]
+            lang: ["touch", "feel", "examine", "pick up", "wipe", "open", "smash"]
         },
         listen: {
             lang: ["listen", "hear"]
@@ -95,7 +95,12 @@ var EscapeView = function (_React$Component) {
     function EscapeView(props) {
         _classCallCheck(this, EscapeView);
 
-        return _possibleConstructorReturn(this, (EscapeView.__proto__ || Object.getPrototypeOf(EscapeView)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (EscapeView.__proto__ || Object.getPrototypeOf(EscapeView)).call(this, props));
+
+        _this.state = {
+            curImage: 0
+        };
+        return _this;
     }
 
     _createClass(EscapeView, [{
@@ -120,7 +125,8 @@ var EscapeView = function (_React$Component) {
                             null,
                             " Escape the Room "
                         )
-                    )
+                    ),
+                    React.createElement("div", {className: "row"})
                 ),
                 React.createElement(InputView, null)
             );

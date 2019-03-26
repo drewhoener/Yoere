@@ -6,8 +6,8 @@ const contentNode = document.getElementById("contents");
 
 const LANG = {
     prep: {
-        lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off"],
-        sub_lang: ["the", "a", "an", "of", "in"],
+        lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off", "open"],
+        sub_lang: ["the", "a", "an", "of", "in", "on"],
         all: () => {
             return LANG.prep.lang.concat(LANG.prep.sub_lang);
         }
@@ -17,7 +17,7 @@ const LANG = {
             lang: ["see", "look", "examine", "observe", "glance"]
         },
         touch: {
-            lang: ["touch", "feel", "examine", "pick up", "wipe"]
+            lang: ["touch", "feel", "examine", "pick up", "wipe", "open", "smash"]
         },
         listen: {
             lang: ["listen", "hear"]
@@ -83,6 +83,9 @@ const generate_pairs = (input) => {
 class EscapeView extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            curImage: 0,
+        };
     }
 
     render() {
@@ -92,6 +95,9 @@ class EscapeView extends React.Component {
                     <div className="col-md-4 offset-md-4 text-center">
                         <h1>Yoere!</h1>
                         <h3> Escape the Room </h3>
+                    </div>
+                    <div className="row">
+
                     </div>
                 </div>
                 <InputView/>

@@ -14,8 +14,56 @@ class MyComponent extends React.Component {
   render() {
     return (
       <div>
-        <h1>My View 02</h1>
+        <View/>
       </div>
+    );
+  }
+}
+
+class View extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      shown: false
+    };
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick(e) {
+    e.preventDefault();
+    this.setState((state) => {
+      const newShown = !state.shown;
+      return {
+        shown: newShown
+      }
+    })
+  }
+
+  render() {
+    return (
+        <div>
+          <button onClick={this.onClick}>Click Me!</button>
+          <StatsWindow shown={this.state.shown}/>
+        </div>
+    );
+  }
+
+}
+
+class StatsWindow extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+        <div>
+          {
+            this.props.shown && <span>Hello</span>
+          }
+        </div>
     );
   }
 }
