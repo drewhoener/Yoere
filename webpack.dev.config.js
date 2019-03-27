@@ -9,7 +9,7 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, 'dist'),
-        publicPath: '/',
+        publicPath: '/node/',
         filename: '[name].js'
     },
     mode: 'development',

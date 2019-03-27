@@ -65,6 +65,11 @@ module.exports = {
             excludeChunks: ['server']
         }),
         new plugin_HtmlWebpack({
+            template: "./src/html/highscore.html",
+            filename: "./highscore.html",
+            excludeChunks: ['server']
+        }),
+        new plugin_HtmlWebpack({
             favicon: "./src/img/favicon.ico",
             excludeChunks: ['server']
         }),
