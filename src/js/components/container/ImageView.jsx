@@ -33,6 +33,7 @@ class ImageView extends Component {
                 curImage: IMAGES[state.idx]
             };
         });
+        console.log(this.state.curImage);
         setTimeout(this.updateImage, 5000);
     }
 

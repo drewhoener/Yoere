@@ -18,4 +18,4 @@ class ScoreView extends Component {
 }
 
 const ScoreEntry = document.getElementById("react-score-entry");
-ReactDOM.render(<ScoreView/>, ScoreEntry);
+ScoreEntry ? ReactDOM.render(<ScoreView/>, ScoreEntry) : false;
