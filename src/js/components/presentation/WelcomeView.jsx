@@ -6,7 +6,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 const PLACES = {
     Play: "/game.html",
-    Credits: "/credits.html"
+    High_Score: "/highscore.html"
 };
 
 class WelcomeView extends Component {
@@ -24,7 +24,7 @@ class WelcomeView extends Component {
                         {
                             Object.keys(PLACES).map((val, idx) => {
                                 return(
-                                    <FadeButton key={idx} link={PLACES[val]} timeIn={1000 * (idx + 1)} size="lg" text={val}/>
+                                    <FadeButton key={idx} link={PLACES[val]} timeIn={1000 * (idx + 1)} size="lg" text={val.split("_").join(" ")}/>
                                 )
                             })
                         }

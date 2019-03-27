@@ -4,16 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "buildDev": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
-    "buildWin": "rmdir dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
-    "buildProd": "rm -rf dist && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
-    "start": "node ./dist/server.js",
+    "buildDev": "run-script-os",
+    "buildDev:darwin:linux": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
+    "buildDev:win32": "rmdir dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
+    "buildProd": "run-script-os",
+    "buildProd:darwin:linux": "rm -rf dist && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
+    "buildProd:win32": "rmdir dist && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
+    "start": "run-script-os",
+    "start:darwin:linux": "node dist/server.js",
+    "start:win32": "node dist\\server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Andrew Hoener",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "run-script-os": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",

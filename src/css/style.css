@@ -10,6 +10,10 @@ body.welcome {
     background-size: cover;
 }
 
+body.score {
+    background-color: #26334a;
+}
+
 .parent {
     position: relative;
 }
