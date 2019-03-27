@@ -4,19 +4,21 @@
 }
 
 body.welcome {
-    background-image: url("../img/EscapeTheRoomIntro.png");
+    background: url("../img/EscapeTheRoomIntro.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
     background-size: cover;
 }
 
-.overlay-parent {
+.parent {
     position: relative;
 }
 
-.image-overlay {
+.vertical-center {
     position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
 }
 
 .game-background {

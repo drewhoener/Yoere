@@ -7,9 +7,11 @@ class FadeButton extends Component {
     constructor(props) {
         super(props);
         this.state = {open: false};
+        this.onClick = this.onClick.bind(this);
+        console.log(props.timeIn);
         setTimeout(() => {
             this.setState({open: true});
-        }, props.timeIn ? props.timeIn : 1000);
+        }, props.timeIn ? props.timeIn : 5000);
     }
 
     onClick(e) {
@@ -19,13 +21,12 @@ class FadeButton extends Component {
     render() {
         const size = this.props.size ? this.props.size : "sm";
         const text = this.props.text ? this.props.text : "Placeholder";
+        const link = this.props.link ? this.props.link : "#";
         return (
             <Fade in={this.state.open}>
-                <div className="float-right">
-                    <Button type="button" size={size} onClick={this.onClick}>
-                        {text}
-                    </Button>
-                </div>
+                <Button href={link} variant={"primary"} type="button" size={size} onClick={this.onClick}>
+                    {text}
+                </Button>
             </Fade>
         );
     }

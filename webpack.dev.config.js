@@ -56,6 +56,10 @@ module.exports = {
             filename: "./game.html",
             excludeChunks: ['server']
         }),
+        new plugin_htmlWebpack({
+            favicon: "./src/img/favicon.ico",
+            excludeChunks: ['server']
+        }),
         new webpack.NoEmitOnErrorsPlugin()
     ]
 };

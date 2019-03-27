@@ -38,6 +38,7 @@ export const generate_pairs = (input) => {
     console.log(split);
     const curSet = {
         verb: null,
+        originalVerb: null,
         prep: [],
         noun: null
     };
@@ -53,6 +54,7 @@ export const generate_pairs = (input) => {
                     console.log("Comparing " + word + " to elements of " + LANG.verb[verbKey].lang);
                     if (LANG.verb[verbKey].lang.includes(word)) {
                         curSet.verb = verbKey;
+                        curSet.originalVerb = word;
                         continue restart;
                     }
                 }

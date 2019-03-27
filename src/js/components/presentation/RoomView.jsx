@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import InputView from "../container/InputView.jsx";
+import ImageView from "../container/ImageView.jsx";
 
 class RoomView extends Component {
 
@@ -11,6 +12,7 @@ class RoomView extends Component {
     render() {
         return (
             <div>
+                <ImageView/>
                 <InputView/>
             </div>
         );

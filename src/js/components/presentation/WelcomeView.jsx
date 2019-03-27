@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import Container from "react-bootstrap/Container";
 
 import FadeButton from '../container/FadeButton.jsx';
-import Row from "react-bootstrap/Row";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 const PLACES = {
-    play: "/game.html",
-    credits: "/credits.html"
+    Play: "/game.html",
+    Credits: "/credits.html"
 };
 
 class WelcomeView extends Component {
@@ -19,11 +18,17 @@ class WelcomeView extends Component {
     render() {
         return (
             <>
-                <div>
-                </div>
-                <div className="container overlay-parent">
-                    <div className="image-overlay">
-                        <FadeButton size="lg" text="Hello World"/>
+                <div className="container">
+                    <div className={"pt-3 d-flex flex-column"}>
+                        <ButtonGroup size={"lg"}>
+                        {
+                            Object.keys(PLACES).map((val, idx) => {
+                                return(
+                                    <FadeButton key={idx} link={PLACES[val]} timeIn={1000 * (idx + 1)} size="lg" text={val}/>
+                                )
+                            })
+                        }
+                        </ButtonGroup>
                     </div>
                 </div>
             </>

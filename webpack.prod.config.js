@@ -58,6 +58,15 @@ module.exports = {
             template: "./src/html/index.html",
             filename: "./index.html",
             excludeChunks: ['server']
-        })
+        }),
+        new plugin_HtmlWebpack({
+            template: "./src/html/game.html",
+            filename: "./game.html",
+            excludeChunks: ['server']
+        }),
+        new plugin_HtmlWebpack({
+            favicon: "./src/img/favicon.ico",
+            excludeChunks: ['server']
+        }),
     ]
 };
