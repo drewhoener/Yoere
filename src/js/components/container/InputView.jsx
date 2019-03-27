@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {generate_pairs} from "../../scripts/action_lang";
+import {generate_pairs} from "./../../scripts/action_lang";
 
 const BREADCRUMB_MAX = 12;
 
