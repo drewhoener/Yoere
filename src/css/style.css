@@ -1,0 +1,51 @@
+.description {
+    font-size: 14px;
+    color: #9e9e9e;
+}
+
+body.welcome {
+    background-image: url("../img/EscapeTheRoomIntro.png");
+    background-size: cover;
+}
+
+.overlay-parent {
+    position: relative;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.game-background {
+    background-color: #26334a;
+}
+
+.command-input {
+    background-color: #555555 !important;
+    color: #aaaaaa !important;
+}
+
+.command-input::placeholder {
+    color: #ffffff;
+}
+
+/*noinspection ALL*/
+.gradient-background {
+    background: linear-gradient(to top, #777777, 15%, transparent);
+    max-height: 8em;
+    overflow-y: auto;
+}
+
+.command {
+    font-style: oblique;
+    font-weight: bold;
+    color: darkgray;
+}
+
+.command-response {
+    font-style: italic;
+    color: gray;
+}
