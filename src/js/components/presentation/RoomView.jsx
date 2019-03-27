@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-import InputView from "../container/InputView.jsx";
-import ImageView from "../container/ImageView.jsx";
+import InputView from "./../container/InputView.jsx";
+import ImageView from "./../container/ImageView.jsx";
 
 class RoomView extends Component {
 

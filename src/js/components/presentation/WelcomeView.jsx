@@ -5,8 +5,8 @@ import FadeButton from '../container/FadeButton.jsx';
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 const PLACES = {
-    Play: "/game.html",
-    High_Score: "/highscore.html"
+    Play: "./game.html",
+    High_Score: "./highscore.html"
 };
 
 class WelcomeView extends Component {

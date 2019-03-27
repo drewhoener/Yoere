@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
-import ChalkboardStart from '../../../img/EscapeTheRoomChalkboardStart.png';
-import ChalkboardCleared from '../../../img/EscapeTheRoomChalkboardCleared.png'
-import ChalkboardGeneric from '../../../img/EscapeTheRoomChalkboard.png'
+import ChalkboardStart from './../../../img/EscapeTheRoomChalkboardStart.png';
+import ChalkboardCleared from './../../../img/EscapeTheRoomChalkboardCleared.png'
+import ChalkboardGeneric from './../../../img/EscapeTheRoomChalkboard.png'
 import Image from "react-bootstrap/Image";
 
 const IMAGES = [
