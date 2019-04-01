@@ -3,8 +3,8 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
 import ChalkboardStart from './../../../img/EscapeTheRoomChalkboardStart.png';
-import ChalkboardCleared from './../../../img/EscapeTheRoomChalkboardCleared.png'
-import ChalkboardGeneric from './../../../img/EscapeTheRoomChalkboard.png'
+import ChalkboardCleared from './../../../img/EscapeTheRoomChalkboardCleared.png';
+import ChalkboardGeneric from './../../../img/EscapeTheRoomChalkboard.png';
 import Image from "react-bootstrap/Image";
 
 const IMAGES = [
@@ -22,7 +22,7 @@ class ImageView extends Component {
             curImage: null
         };
         this.updateImage = this.updateImage.bind(this);
-        setTimeout(this.updateImage, 1000)
+        setTimeout(this.updateImage, 1000);
     }
 
     updateImage() {
@@ -42,9 +42,9 @@ class ImageView extends Component {
             <div>
                 <Row>
                     <Col className="parent">
-                        <div className="vertical-center">
+                        <div className="vertical-center light-text">
                             <h1>Placeholder</h1>
-                            <p>
+                            <p className={"text-center"}>
                                 Hints, Inventory & other stuff.<br/>
                                 Maps will be on right side probably
                             </p>

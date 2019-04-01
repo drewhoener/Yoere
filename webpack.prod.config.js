@@ -16,24 +16,15 @@ module.exports = {
     mode: 'production',
     target: 'web',
     devtool: "#source-map",
-    optimization: {
-        minimizer: [
-            new plugin_UglifyJS({
-                cache: true,
-                parallel: true,
-                sourceMap: true // set to true if you want JS source maps
-            }),
-        ]
-    },
     module: {
         rules: [
             //Bring it all back to ES5
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                use: {
+                use: [{
                     loader: "babel-loader",
-                }
+                }]
             },
             //Pack bundled js into html
             {

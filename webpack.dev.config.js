@@ -21,16 +21,16 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                use: {
+                use: [{
                     loader: "babel-loader",
-                }
+                }]
             },
             //Pack bundled js into html
             {
                 test: /\.html$/,
-                use: {
+                use: [{
                     loader: "html-loader",
-                }
+                }]
             },
             {
                 test: /\.css$/,
