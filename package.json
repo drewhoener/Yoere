@@ -6,10 +6,10 @@
   "scripts": {
     "buildDev": "run-script-os",
     "buildDev:darwin:linux": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
-    "buildDev:win32": "rmdir /q/s dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
+    "buildDev:win32": "rmdir /q/s dist; webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
     "buildProd": "run-script-os",
-    "buildProd:darwin:linux": "rm -rf dist && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
-    "buildProd:win32": "rmdir dist && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
+    "buildProd:darwin:linux": "rm -rf dist && mongo src/js/scripts/init.mongo.js && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
+    "buildProd:win32": "rmdir /q/s dist; mongo src/js/scripts/init.mongo.js && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
     "start": "run-script-os",
     "start:darwin:linux": "node dist/server.js",
     "start:win32": "node dist\\server.js",
@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4",
+    "mongodb": "^3.2.2",
     "run-script-os": "^1.0.5"
   },
   "devDependencies": {

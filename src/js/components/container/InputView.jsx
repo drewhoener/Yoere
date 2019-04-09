@@ -61,6 +61,7 @@ class InputView extends Component {
         //alert(str);
         this.add_command(str);
         input.command.value = '';
+        console.log(generate_pairs(str));
         this.add_command(`You ${str.toLowerCase()}`, true);
     };
 
