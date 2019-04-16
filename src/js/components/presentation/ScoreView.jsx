@@ -17,5 +17,7 @@ class ScoreView extends Component {
     }
 }
 
+export default ScoreView;
+
 const ScoreEntry = document.getElementById("react-score-entry");
 ScoreEntry ? ReactDOM.render(<ScoreView/>, ScoreEntry) : false;

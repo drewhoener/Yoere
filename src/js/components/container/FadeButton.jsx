@@ -11,7 +11,7 @@ class FadeButton extends Component {
         console.log(props.timeIn);
         setTimeout(() => {
             this.setState({open: true});
-        }, props.timeIn ? props.timeIn : 5000);
+        }, props.timeIn ? props.timeIn : 3000);
     }
 
     onClick(e) {

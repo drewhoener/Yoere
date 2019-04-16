@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "buildDev": "run-script-os",
-    "buildDev:darwin:linux": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
-    "buildDev:win32": "rmdir dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
+    "buildDev:darwin:linux": "rm -rf dist && mongo src/js/scripts/init.mongo.js && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
+    "buildDev:win32": "mongo src/js/scripts/init.mongo.js && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
     "buildProd": "run-script-os",
-    "buildProd:darwin:linux": "rm -rf dist && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
-    "buildProd:win32": "rmdir dist && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
+    "buildProd:darwin:linux": "rm -rf dist && mongo src/js/scripts/init.mongo.js && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
+    "buildProd:win32": "mongo src/js/scripts/init.mongo.js && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
     "start": "run-script-os",
     "start:darwin:linux": "node dist/server.js",
     "start:win32": "node dist\\server.js",
@@ -18,7 +18,10 @@
   "author": "Andrew Hoener",
   "license": "ISC",
   "dependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "mongodb": "^3.2.2",
     "run-script-os": "^1.0.5"
   },
   "devDependencies": {
@@ -26,6 +29,8 @@
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
+    "circular-json": "^0.5.9",
+    "copy-webpack-plugin": "^5.0.2",
     "css-loader": "^2.1.1",
     "file-loader": "^3.0.1",
     "html-loader": "^0.5.5",

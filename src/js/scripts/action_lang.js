@@ -1,7 +1,7 @@
 const LANG = {
     prep: {
         lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off", "open"],
-        sub_lang: ["the", "a", "an", "of", "in", "on"],
+        sub_lang: ["the", "a", "an", "of", "in", "on", "with"],
         all: () => {
             return LANG.prep.lang.concat(LANG.prep.sub_lang);
         }
@@ -11,13 +11,22 @@ const LANG = {
             lang: ["see", "look", "examine", "observe", "glance"]
         },
         touch: {
-            lang: ["touch", "feel", "examine", "pick up", "wipe", "open", "smash"]
+            lang: ["touch", "feel", "examine", "wipe", "open"]
+        },
+        attack: {
+            lang: ["attack", "smash", "break", "hit"]
         },
         listen: {
             lang: ["listen", "hear"]
         },
         move: {
-            lang: ["move", "jump", "walk"]
+            lang: ["move", "jump", "walk", "go"]
+        },
+        take: {
+            lang: ["take", "pick up", "swipe"]
+        },
+        solve: {
+            lang: ["solve", "finish"]
         }
     }
 };
@@ -40,13 +49,15 @@ export const generate_pairs = (input) => {
         verb: null,
         originalVerb: null,
         prep: [],
-        noun: null
+        noun: null,
+        obj: null
     };
 
+    let use_obj = false;
     restart:
         for (let splitKey in split) {
             let word = split[splitKey];
-            console.log("Word is " + word);
+            console.log("Split word is " + word);
             if (!curSet.verb) {
                 console.log("Verb is null");
                 for (let verbKey in LANG.verb) {
@@ -60,17 +71,26 @@ export const generate_pairs = (input) => {
                 }
             }
             //console.log(LANG.prep.all());
-            if (LANG.prep.all().includes(word)) {
+            if (curSet.verb && !curSet.noun && LANG.prep.all().includes(word)) {
                 curSet.prep.push(word);
                 continue;
             }
 
             if (!curSet.noun) {
                 curSet.noun = word;
+                continue;
             }
-            if (curSet.noun && curSet.verb) {
-                console.log("Found both");
+
+            if (use_obj && !LANG.prep.all().includes(word)) {
+                curSet.obj = word;
                 break;
+            }
+
+            if (curSet.noun && curSet.verb) {
+                console.log(`Word is ${word}`);
+                if (!LANG.prep.sub_lang.includes(word))
+                    break;
+                use_obj = true;
             }
         }
     return curSet;
