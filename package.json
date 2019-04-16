@@ -18,6 +18,8 @@
   "author": "Andrew Hoener",
   "license": "ISC",
   "dependencies": {
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "mongodb": "^3.2.2",
     "run-script-os": "^1.0.5"
@@ -27,6 +29,8 @@
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
+    "circular-json": "^0.5.9",
+    "copy-webpack-plugin": "^5.0.2",
     "css-loader": "^2.1.1",
     "file-loader": "^3.0.1",
     "html-loader": "^0.5.5",

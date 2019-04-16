@@ -20,7 +20,7 @@ const LANG = {
             lang: ["listen", "hear"]
         },
         move: {
-            lang: ["move", "jump", "walk"]
+            lang: ["move", "jump", "walk", "go"]
         },
         take: {
             lang: ["take", "pick up", "swipe"]

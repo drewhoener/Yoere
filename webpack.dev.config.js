@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
 const plugin_htmlWebpack = require('html-webpack-plugin');
+const plugin_copyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -40,7 +41,9 @@ module.exports = {
                 test: /\.(png|svg|jpg|gif)$/,
                 use: [{
                     loader: 'file-loader',
-                    options: {}
+                    options: {
+                        name: '[name].[ext]'
+                    }
                 }]
             }
         ]
@@ -65,6 +68,9 @@ module.exports = {
             favicon: "./src/img/favicon.ico",
             excludeChunks: ['server']
         }),
-        new webpack.NoEmitOnErrorsPlugin()
+        new webpack.NoEmitOnErrorsPlugin(),
+        new plugin_copyWebpackPlugin([
+            {from: 'src/img', to: 'img'}
+        ])
     ]
 };

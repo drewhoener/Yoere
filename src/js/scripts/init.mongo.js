@@ -1,14 +1,33 @@
 db = new Mongo().getDB('gametracker');
 
+db.locations.remove({});
+
+db.locations.update({name: 'overhead'}, {
+    "$setOnInsert":
+        {
+            name: 'overhead',
+            images: [
+                'TopDown.png',
+            ],
+            actions: {
+                none: {
+                    touch: {
+                        text: [
+                            'You touch the chalkboard. Be careful not to smudge the letters!'
+                        ]
+                    }
+                }
+            }
+        }
+}, {upsert: true});
+
 db.locations.update({name: 'mirror'}, {
     "$setOnInsert":
         {
             name: 'mirror',
             images: [
-                'EscapeTheRoomChalkboard.png',
-                'EscapeTheRoomChalkboardCleared.png',
-                'EscapeTheRoomChalkboardStart.png',
-                'EscapeTheRoomIntro.png'
+                'Mirror.png',
+                'MirrorCleared.png'
             ],
             actions: {
                 none: {
@@ -128,9 +147,4 @@ db.locations.update({name: 'desk'}, {
 }, {upsert: true});
 
 db.states.remove({});
-
-db.gametracker.insert([
-    {
-        status: 'Start', owner: 'Player', score: '0'
-    }
-]);
+//db.players.remove({});

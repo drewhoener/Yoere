@@ -32,10 +32,13 @@ class InputView extends Component {
         this.scrollRef = null;
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.scrollRef)
             this.scrollRef.scrollIntoView({behavior: 'smooth'});
-    };
+        if (prevProps.inputResponse !== this.props.inputResponse) {
+            this.add_command(this.props.inputResponse, true);
+        }
+    }
 
     add_command(command, isResponse) {
         this.setState((state) => {
@@ -59,11 +62,27 @@ class InputView extends Component {
         let input = document.forms.commandForm;
         let str = input.command.value;
         //alert(str);
+        let split = str.split(' ');
+        if (split.length === 1) {
+            this.props.setName(split[0]);
+            input.command.value = '';
+            return;
+        }
         this.add_command(str);
         input.command.value = '';
-        console.log(generate_pairs(str));
-        this.add_command(`You ${str.toLowerCase()}`, true);
+        let pairs = generate_pairs(str);
+        console.log(pairs);
+        //this.add_command(`You ${str.toLowerCase()}`, true);
+        this.validateLang(pairs);
     };
+
+    validateLang(pairs) {
+        if (!pairs || !pairs.verb) {
+            this.add_command(`Invalid input command`, true);
+            return;
+        }
+        this.props.onLang(pairs);
+    }
 
     render() {
         //console.log(this.state.previous);
