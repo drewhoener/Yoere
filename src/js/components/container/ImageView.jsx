@@ -22,8 +22,8 @@ class ImageView extends Component {
                         <div className="vertical-center light-text">
                             <h1>Placeholder</h1>
                             <p className={"text-center"}>
-                                Hints, Inventory & other stuff.<br/>
-                                Maps will be on right side probably
+                                Player Inventory: <br/>
+                                Updated by POST request
                             </p>
                         </div>
                     </Col>
