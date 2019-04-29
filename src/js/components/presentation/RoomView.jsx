@@ -47,6 +47,10 @@ class RoomView extends Component {
 
     onLang(lang) {
         let images = null;
+        if (!this.state.locations.hasOwnProperty(lang.noun.toLowerCase())) {
+            this.setState({inputResponse: `Couldn't find the location you're trying to go to!`});
+            return;
+        }
         switch (lang.verb.toLowerCase()) {
             case 'examine':
                 break;
@@ -57,10 +61,6 @@ class RoomView extends Component {
             case 'listen':
                 break;
             case 'move':
-                if (!this.state.locations.hasOwnProperty(lang.noun.toLowerCase())) {
-                    this.setState({inputResponse: `Couldn't find the location you're trying to go to!`});
-                    break;
-                }
                 images = this.state.locations[lang.noun.toLowerCase()].images;
                 if (!images) {
                     this.setState({inputResponse: `Couldn't find the location you're trying to go to!`});

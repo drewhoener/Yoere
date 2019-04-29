@@ -31,7 +31,8 @@ db.locations.update({name: 'mirror'}, {
             ],
             actions: {
                 none: {
-                    priority: 'wipe',
+                    solve: 'wipe',
+                    object: null,
                     wipe: {
                         text: ['You run your sleeve across the mirror, and notice some of the letters ' +
                         'begin to vanish. You take this as a hint and quickly pick up the speed. ' +
@@ -126,6 +127,8 @@ db.locations.update({name: 'desk'}, {
             name: 'desk',
             images: [],
             actions: {
+                solve: 'attack',
+                object: 'hammer',
                 hammer: {
                     attack: 'The desk smashes open, revealing a piece of paper with a single word'
                 },
