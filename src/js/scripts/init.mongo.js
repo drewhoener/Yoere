@@ -29,19 +29,23 @@ db.locations.update({name: 'mirror'}, {
                 'Mirror.png',
                 'MirrorCleared.png'
             ],
+            flag: 0b10000,
             actions: {
                 none: {
                     solve: 'wipe',
                     object: null,
                     wipe: {
-                        text: ['You run your sleeve across the mirror, and notice some of the letters ' +
+                        text: [ 'On the mirror, you see the following' +
+                        'You run your sleeve across the mirror, and notice some of the letters ' +
                         'begin to vanish. You take this as a hint and quickly pick up the speed. ' +
-                        'After a moment, you notice that only the following letters are left unerased - R A T H E D'
+                        'After a moment, you notice that only the following letters are left unerased - R A T H E D' + 
+                        'You are able to rearrange them, foring the word HATRED'
                         ]
                     },
                     examine: {
                         text: [
-                            'You look closely at the mirror, and notice there’s a weird reflection on it, perhaps something else hidden behind the letters that blot out most of the reflection. Do you look into it?'
+                            'You look closely at the mirror, and notice there’s a weird reflection on it, perhaps something else hidden behind the letters that blot out most of the reflection. Do you look into it?' +
+                            'Of course you do. You look into the mirror deeply and notice...Your reflection staring back at you.'
                         ]
                     },
                     touch: {
@@ -63,7 +67,7 @@ db.locations.update({name: 'hammer'}, {
                 none: {
                     examine: {
                         text: [
-                            'It\'s a fucking hammer'
+                            'It\'s a fucking hammer. Might be useful to pick up.'
                         ]
                     },
                     touch: {
@@ -71,6 +75,7 @@ db.locations.update({name: 'hammer'}, {
                             'You pick it up, it has a bit of heft to it'
                         ]
                     }
+                    
                 }
             }
         }
@@ -81,19 +86,22 @@ db.locations.update({name: 'wall'}, {
         {
             name: 'wall',
             images: [],
+            flag: 0b00100,
             actions: {
                 none: {
                     examine: {
                         text: [
                             'You look at the wall and discover what appears to be a riddle. You think you might be able to *solve* it',
-                            'Upon further examination, you notice that the words seem to be written with sharpie. How will they ever get this off the wall?'
+                            'Upon further examination, you notice that the words seem to be written with sharpie. How will they ever get this off the wall?',
+                            'The riddle reads "The more places I be, the less you can see. What am I?"'
                         ]
                     },
                     touch: {
                         text: [
                             '“Ooh” You think to yourself. “It’s as cold as the void”'
                         ]
-                    }
+                    },
+                    solve: 'darkness'
                 }
             }
         }
@@ -105,6 +113,8 @@ db.locations.update({name: 'floor'}, {
             name: 'floor',
             images: [],
             actions: {
+                solve: 'fear',
+                flag: 0b00010,
                 none: {
                     examine: {
                         text: [
@@ -129,6 +139,7 @@ db.locations.update({name: 'desk'}, {
             actions: {
                 solve: 'attack',
                 object: 'hammer',
+                flag: 0b01000,
                 hammer: {
                     attack: 'The desk smashes open, revealing a piece of paper with a single word'
                 },
@@ -140,10 +151,57 @@ db.locations.update({name: 'desk'}, {
                     },
                     touch: {
                         text: [
-                            'It\'s very well built but one of the drawers seems to be stuck shut'
+                            'It\'s very well built but one of the drawers seems to be stuck shut. You can\t break it open when your hands'
                         ]
                     },
                     attack: {}
+                }
+            }
+        }
+}, {upsert: true});
+
+db.locations.update({name: 'bookcase'}, {
+    "$setOnInsert":
+        {
+            name: 'bookcase',
+            images: [],
+            actions: {
+                solve: 'Loathing',
+                flag: 0b00001,
+                none: {
+                    examine: {
+                        text: [
+                            'You see a bookcase with quite a few books. You think it may be worth looking through, so you take your time...' +
+                            'After a bit, you come to the conclustion that the word is either loathing, scarecrow, or jealous. '
+                        ]
+                    },
+                    touch: {
+                        text: [
+                            'Lots of books, probably for some nerd.'
+                        ]
+                    },
+                }
+            }
+        }
+}, {upsert: true});
+
+db.locations.update({name: 'Chalkboard'}, {
+    "$setOnInsert":
+        {
+            name: 'chalkboard',
+            images: [],
+            actions: {
+                none: {
+                    examine: {
+                        text: [
+                            'You see a chalkboard, with words written in. You think this is the main puzzle to solve - it seems different.'
+                        ]
+                    },
+                    touch: {
+                        text: [
+                            'Lots of chalk, with a place to write in the words you\'ve discovered.'
+                        ]
+                    },
                 }
             }
         }
