@@ -91,13 +91,23 @@ class RoomView extends Component {
         }
     }
 
+    //Convenience method to pass response values back to the InputView
+    addResponse(response) {
+        if (Array.isArray(response)) {
+            let mapped = response.map(item => item.toString());
+            this.setState({inputResponse: mapped});
+            return;
+        }
+        this.setState({inputResponse: response.toString()});
+    }
+
     addItem(item) {
         //No. Bad null.
         if (!item)
             return;
         //Sanity check, shouldn't happen but if you happen to get this far without having entered your name there's gonna be problems
         if (!this.state.player) {
-            this.setState({inputResponse: `You don't seem to have a player associated with you. Try refreshing the page and entering your first name`});
+            this.addResponse(`You don't seem to have a player associated with you. Try refreshing the page and entering your first name`);
             return;
         }
         //Check to make sure they don't already have that item
@@ -143,7 +153,7 @@ class RoomView extends Component {
         let location = null;
         //If the action is invalid, don't do it
         if (lang.verb && lang.verb !== 'move' && !curLocation.actions.hasOwnProperty(lang.verb)) {
-            this.setState({inputResponse: 'Try as you might, your actions seem to have no effect'});
+            this.addResponse('Try as you might, your actions seem to have no effect');
             return;
         }
         //Our final action after traversing all the available stuff in the current location
@@ -161,7 +171,7 @@ class RoomView extends Component {
                 //Obviously if they don't have the item, they can't use it
                 if (!this.state.player.inventory.find(inv_item => inv_item.name.toLowerCase() === lang.obj)) {
                     if (lang.verb !== 'take') {
-                        this.setState({inputResponse: `You find yourself wanting to use a ${lang.obj} to complete your task, but are disappointed to find you don't have one.`});
+                        this.addResponse(`You find yourself wanting to use a ${lang.obj} to complete your task, but are disappointed to find you don't have one.`);
                         return;
                     }
                 }
@@ -173,7 +183,7 @@ class RoomView extends Component {
         }
         console.log(`Final Action after obj: ${JSON.stringify(final_action, null, 4)}`);
         if (!final_action && lang.handle_incorrect && lang.verb !== 'move') {
-            this.setState({inputResponse: 'Try as you might, your actions seem to have no effect'});
+            this.addResponse('Try as you might, your actions seem to have no effect');
             return;
         }
         //Basically all the same stuff but added flavor text so it all doesn't seem the same boring replies
@@ -181,28 +191,28 @@ class RoomView extends Component {
         switch (lang.verb.toLowerCase()) {
             case 'examine':
                 if (!final_action) {
-                    this.setState({inputResponse: [`There doesn't seem to be anything here worth examining...`]});
+                    this.addResponse([`There doesn't seem to be anything here worth examining...`]);
                     return;
                 }
-                this.setState({inputResponse: final_action.text});
+                this.addResponse(final_action.text);
                 break;
             case 'touch':
                 if (!final_action) {
-                    this.setState({inputResponse: [`Everything just kinda looks gross. Better not touch it.`]});
+                    this.addResponse([`Everything just kinda looks gross. Better not touch it.`]);
                     return;
                 }
-                this.setState({inputResponse: final_action.text});
+                this.addResponse(final_action.text);
                 break;
             case 'attack':
                 if (!final_action) {
-                    this.setState({inputResponse: [`Try as you might, your actions don\'t seem to have much effect`]});
+                    this.addResponse([`Try as you might, your actions don\'t seem to have much effect`]);
                     return;
                 }
-                this.setState({inputResponse: final_action.text});
+                this.addResponse(final_action.text);
                 break;
             case 'listen':
                 if (!final_action) {
-                    this.setState({inputResponse: [`You listen...and listen...Nothing.`, `Maybe time for that hearing aid?`]});
+                    this.addResponse([`You listen...and listen...Nothing.`, `Maybe time for that hearing aid?`]);
                     return;
                 }
                 break;
@@ -210,7 +220,7 @@ class RoomView extends Component {
                 //If we're moving there's some extra parsing to do
                 //Make sure the location exists
                 if (!this.state.locations.hasOwnProperty(lang.noun.toLowerCase())) {
-                    this.setState({inputResponse: `Couldn't find the location you're trying to go to!`});
+                    this.addResponse(`Couldn't find the location you're trying to go to!`);
                     return;
                 }
                 location = this.state.locations[lang.noun.toLowerCase()];
@@ -227,7 +237,7 @@ class RoomView extends Component {
                 //Otherwise we get the image specified by the image key and render that
                 images = location.images;
                 if (!images) {
-                    this.setState({inputResponse: `Couldn't find the location you're trying to go to!`});
+                    this.addResponse(`Couldn't find the location you're trying to go to!`);
                     break;
                 }
                 this.setState({
@@ -241,26 +251,26 @@ class RoomView extends Component {
                 if (!lang.obj)
                     break;
                 if (!final_action) {
-                    this.setState({inputResponse: `You look around trying to grab a ${lang.obj}, but can't seem to find one`});
+                    this.addResponse(`You look around trying to grab a ${lang.obj}, but can't seem to find one`);
                     return;
                 }
                 //Extra flavor text, but no items here. Items are added below since some items can be automatically added
                 //and it's more effective to just have the call once
-                this.setState({inputResponse: `You grab the ${lang.obj}, thinking it could be useful down the line.`});
+                this.addResponse(`You grab the ${lang.obj}, thinking it could be useful down the line.`);
                 break;
             case 'solve':
                 //Solve the puzzle, but make sure there's actually a puzzle to solve
                 if (!final_action) {
-                    this.setState({inputResponse: `Your mind is racing, itching to solve puzzles...but there don't seem to be any here`});
+                    this.addResponse(`Your mind is racing, itching to solve puzzles...but there don't seem to be any here`);
                     return;
                 }
                 //If it's not the solution, they didn't do it
                 if (lang.noun !== final_action.solution) {
-                    this.setState({inputResponse: `After hours of pondering the clues you think you have it...but it doesn't seem to fit on the chalkboard...`});
+                    this.addResponse(`After hours of pondering the clues you think you have it...but it doesn't seem to fit on the chalkboard...`);
                     return;
                 }
                 //Display the 'you did it' text
-                this.setState({inputResponse: final_action.text});
+                this.addResponse(final_action.text);
                 break;
         }
         //Do the extra stuff
