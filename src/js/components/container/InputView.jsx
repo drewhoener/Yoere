@@ -3,9 +3,9 @@ import {generate_pairs} from "./../../scripts/action_lang";
 import {isEqual} from "lodash/lang";
 
 //Max number of items we'll display in the scroll view for commands
-const BREADCRUMB_MAX = 12;
+const BREADCRUMB_MAX = 24;
 
-//Little tiny react module instead of an entire class
+//Little tiny react hook instead of an entire class
 //Renders a form with a callback onSubmit to the InputView for parsing, formatting and displaying
 function TextForm(props) {
     return (

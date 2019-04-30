@@ -3,8 +3,54 @@ import ReactDOM from 'react-dom';
 import InputView from "./../container/InputView.jsx";
 import ImageView from "./../container/ImageView.jsx";
 import deepmerge from "deepmerge";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 
 const _ = require('lodash/lang');
+
+//React hook for a popup modal
+function successModal(props) {
+    const start = props.player.start_time;
+    const now = Date.now();
+    const days = parseInt((now - start) / (1000 * 60 * 60 * 24));
+    const hours = parseInt(Math.abs(now - start) / (1000 * 60 * 60) % 24);
+    const minutes = parseInt(Math.abs(now - start) / (1000 * 60) % 60);
+    const seconds = parseInt(Math.abs(now - start) / (1000) % 60);
+    fetch('/api/scores', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({update: 'states', id: props.player._id, time: (now - start)}),
+    })
+        .then(result => {
+            if (result.ok) {
+
+            }
+        })
+        .catch(console.error);
+    return (
+        <Modal {...this.props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Congratulations!
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <h4>Congratulations!</h4>
+                <p>
+                    You have escaped the room!<br/>
+                    Your time
+                    was {`${days} day(s), ${hours} hour(s), ${minutes} minute(s), and ${seconds} second(s)`}<br/>
+                    Your time has been added to the scoreboard, feel free to explore the room, but there is nothing left
+                    to do.
+                </p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={this.props.onHide}>Close</Button>
+            </Modal.Footer>
+        </Modal>
+    );
+}
+
 
 /**
  * @author Drew Hoener
@@ -19,6 +65,8 @@ class RoomView extends Component {
             curImage: 'TopDown.png',        //Current Image, used by ImageView
             curLocation: null,              //Current Location in room, the object key not the object itself because it frequently updates
             chalkboard_flag: 0b00000,       //The current binary code for the chalkboard. See the tests if you're wondering why
+            has_key: false,
+            finished: false,
             player: null                    //The current player, gotten via POST
         };
         this.onLang = this.onLang.bind(this);
@@ -45,9 +93,17 @@ class RoomView extends Component {
         //Prevent accessing null objects before we load data
         if (!this.state.curLocation || !this.state.locations)
             return;
+
+        if (this.state.finished) {
+
+        }
+
         //If the chalkboard flag updates while we're viewing it we have to reload the image
-        if (this.state.curLocation === 'chalkboard' && prevState.chalkboard_flag !== this.state.chalkboard_flag) {
-            this.setState({curImage: `chalkboard/${(this.state.chalkboard_flag >>> 0).toString(2).padStart(5, '0')}.png`});
+        if (this.state.curLocation === 'chalkboard' && (prevState.chalkboard_flag !== this.state.chalkboard_flag || prevState.has_key !== this.state.has_key)) {
+            let key = (this.state.chalkboard_flag >>> 0).toString(2).padStart(5, '0');
+            if (this.state.has_key)
+                key.padEnd(6, '1');
+            this.setState({curImage: `chalkboard/${key}.png`});
             return;
         }
         //Get the current location
@@ -227,11 +283,17 @@ class RoomView extends Component {
                 //If it's the chalkboard we handle the rendering separately
                 //Calculate the bits and send it off
                 if (location.name.toLowerCase() === 'chalkboard') {
-                    this.setState(state => ({
-                        curImage: `chalkboard/${(state.chalkboard_flag >>> 0).toString(2).padStart(5, '0')}.png`,
-                        curLocation: 'chalkboard',
-                        inputResponse: 'You go to the chalkboard'
-                    }));
+                    this.setState(state => {
+                        let key = (this.state.chalkboard_flag >>> 0).toString(2).padStart(5, '0');
+                        if (this.state.has_key) {
+                            key = key.padEnd(6, '1');
+                        }
+                        return {
+                            curImage: `chalkboard/${key}.png`,
+                            curLocation: 'chalkboard',
+                            inputResponse: 'You go to the chalkboard'
+                        };
+                    });
                     break;
                 }
                 //Otherwise we get the image specified by the image key and render that
@@ -311,13 +373,18 @@ class RoomView extends Component {
             if (final_action.state) {
                 this.setState(state => {
                     let chalkboard_mod = state.chalkboard_flag;
+                    let key = state.has_key;
                     //Use bitwise OR to calculate the new flag to use
                     if (final_action.state.chalkboard) {
                         chalkboard_mod |= final_action.state.chalkboard;
                     }
+                    if (final_action.state.has_key) {
+                        key = final_action.state.has_key;
+                    }
                     //Prepare our DB object the same way as before (above)
                     let db_object = {};
                     db_object[`states.chalkboard_flag`] = chalkboard_mod;
+                    db_object[`states.has_key`] = key;
                     //Post it to be updated in Mongo
                     fetch('/api/players', {
                         method: 'POST',
@@ -325,7 +392,8 @@ class RoomView extends Component {
                         body: JSON.stringify({update: 'states', id: this.state.player._id, states: db_object}),
                     }).catch(console.error);
                     return {
-                        chalkboard_flag: chalkboard_mod
+                        chalkboard_flag: chalkboard_mod,
+                        has_key: key
                     }
                 })
             }

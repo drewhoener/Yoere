@@ -3,7 +3,7 @@
 
 const LANG = {
     prep: {                 //Words to skip over (not main words)
-        lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off", "open"],
+        lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off", "up"],
         sub_lang: ["the", "a", "an", "of", "in", "on", "with"],
         all: () => {
             return LANG.prep.lang.concat(LANG.prep.sub_lang);
@@ -14,10 +14,10 @@ const LANG = {
             lang: ["see", "look", "examine", "observe", "glance", "inspect"]    //Words that flatten to examine
         },
         touch: {
-            lang: ["touch", "feel", "wipe", "open", "use"]
+            lang: ["touch", "feel", "wipe", "open", "use", "unlock"]
         },
         attack: {
-            lang: ["attack", "smash", "break", "hit", "unlock", "slap", "hit"],
+            lang: ["attack", "smash", "break", "hit", "slap", "hit"],
             handle_incorrect: true                                              //Automatically tell you when you can't use these words
         },
         listen: {
@@ -28,10 +28,10 @@ const LANG = {
             handle_incorrect: true
         },
         take: {
-            lang: ["take", "pick up", "swipe", "grab", "get"]
+            lang: ["take", "pick", "swipe", "grab", "get"]
         },
         solve: {
-            lang: ["solve", "finish"]
+            lang: ["solve", "finish", "answer"]
         }
     }
 };

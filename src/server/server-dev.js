@@ -78,7 +78,8 @@ app.post('*/api/players', async (req, res) => {
         console.error(`Player not in database, inserting`);
         player = {
             name: body.name.toLowerCase(),
-            inventory: []
+            inventory: [],
+            start_time: Date.now()
         };
         insertPlayer(player).then(response => console.log(`Set player`)).catch(console.error);
     }

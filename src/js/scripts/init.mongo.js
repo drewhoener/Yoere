@@ -41,7 +41,8 @@ db.locations.update({name: 'mirror'}, {
                 wipe: {     //Specific actions like wipe have priority in code over generic actions like touch
                     none: { //Item used, could be none or something like hammer to interact with the hammer
                         text: ['You run your sleeve across the mirror, and notice some of the letters ' +   //Text returned on interaction
-                        'begin to vanish. You take this as a hint and quickly pick up the speed.',
+                        'begin to vanish.',
+                            'You take this as a hint and quickly pick up the speed.',
                             'A jumble of letters is left over, you pick them out and get the word - R A T H E D',
                             'Doesn\'t seem like much of a word...maybe it can be rearranged?'
                         ],
@@ -308,7 +309,59 @@ db.locations.update({name: 'chalkboard'}, {
                         }
                     }
                 },
+                take: {
+                    key: {
+                        text: [
+                            'You grab the key. Could be useful'
+                        ],
+                        inventory: {        //An item added to inventory through explicit 'take'
+                            name: 'Key',
+                            text: 'A solid brass key. Keys usually open things...'
+                        },
+                        state: {
+                            has_key: true
+                        }
 
+                    }
+                }
+
+            }
+        }
+}, {upsert: true});
+
+db.locations.update({name: 'door'}, {
+    "$setOnInsert":
+        {
+            name: 'door',
+            images: ['doorclosed.png', 'dooropen.png'],
+            image: 0,
+            actions: {
+                examine: {
+                    none: {
+                        text: [
+                            'A sturdy door, locked tight. If you want to get out of here, you\'ll need some sort of key.'
+                        ]
+                    }
+                },
+                touch: {
+                    none: {
+                        text: [
+                            'You yank on the door. It won\'t budge an inch'
+                        ]
+                    },
+                    key: {
+                        text: [
+                            'You insert the key into the door. It fits perfectly and turns with ease.',
+                            'The door swings open, and you walk out'
+                        ],
+                        loc_state: {
+                            image: 1
+                        },
+                        state: {
+                            finished: true
+                        }
+                    }
+                }
             }
         }
 }, {upsert: true});
