@@ -1,21 +1,24 @@
+//Provides language support for the player's input
+//It's by no means perfect but it does what I want it to do
+
 const LANG = {
-    prep: {
+    prep: {                 //Words to skip over (not main words)
         lang: ["at", "to", "from", "towards", "under", "over", "on top", "top", "", "off", "open"],
         sub_lang: ["the", "a", "an", "of", "in", "on", "with"],
         all: () => {
             return LANG.prep.lang.concat(LANG.prep.sub_lang);
         }
     },
-    verb: {
+    verb: {                 //Verb keys, words that are alike get reduced to a key for easier parsing and allow the player to use their own language.
         examine: {
-            lang: ["see", "look", "examine", "observe", "glance", "inspect"]
+            lang: ["see", "look", "examine", "observe", "glance", "inspect"]    //Words that flatten to examine
         },
         touch: {
             lang: ["touch", "feel", "wipe", "open", "use"]
         },
         attack: {
             lang: ["attack", "smash", "break", "hit", "unlock", "slap", "hit"],
-            handle_incorrect: true
+            handle_incorrect: true                                              //Automatically tell you when you can't use these words
         },
         listen: {
             lang: ["listen", "hear"]
@@ -33,7 +36,10 @@ const LANG = {
     }
 };
 
-const strip_input = (str) => {
+/**
+ * @author Drew Hoener
+ * */
+const strip_input = (str) => {      //Remove unneeded characters from the string, like non ASCII and punctuation
     //Pesky characters
     let stripped = str.replace(/[.,\/#!$%&\*;:{}=\-_`~()]/g, "");
     //Remove extra space
@@ -43,11 +49,14 @@ const strip_input = (str) => {
     return stripped.trim();
 };
 
-export const generate_pairs = (input) => {
+/**
+ * @author Drew Hoener
+ * */
+export const generate_pairs = (input) => {      //Split the input into an object we can actually use in our parser
     input = strip_input(input.toLowerCase());
     let split = input.split(" ");
     console.log(split);
-    const curSet = {
+    const curSet = {                            //Our output
         verb: null,
         originalVerb: null,
         prep: [],
@@ -73,15 +82,15 @@ export const generate_pairs = (input) => {
                 }
             }
             //console.log(LANG.prep.all());
-            if (curSet.verb && !curSet.noun && LANG.prep.all().includes(word)) {
+            if (curSet.verb && !curSet.noun && LANG.prep.all().includes(word)) {        //Set the verb first
                 curSet.prep.push(word);
                 continue;
             }
 
-            if (!curSet.noun) {
+            if (!curSet.noun) {                                                         //Then the noun
                 curSet.noun = word;
-                if (LANG.verb.take.lang.includes(curSet.verb))
-                    curSet.obj = word;
+                if (LANG.verb.take.lang.includes(curSet.verb))                          //Bit of a hack but the onLang method in RoomView looks in the location
+                    curSet.obj = word;                                                  //object for the [obj] key and that's not set with something like 'take hammer'
                 continue;
             }
 

@@ -1,3 +1,7 @@
+//Provides mongo location data
+//For a completely commented entry see line 30
+//For an inventory example, see lines 124 and 205
+
 db = new Mongo().getDB('gametracker');
 
 db.locations.remove({});
@@ -24,24 +28,25 @@ db.locations.update({name: 'overhead'}, {
 }, {upsert: true});
 
 db.locations.update({name: 'mirror'}, {
+    //Insert only once, don't want multiple entries
     "$setOnInsert":
         {
-            name: 'mirror',
-            image: 0,
-            images: [
+            name: 'mirror', //name
+            image: 0,       //what image to use from images
+            images: [       //Image collection
                 'Mirror.png',
                 'MirrorCleared.png'
             ],
-            actions: {
-                wipe: {
-                    none: {
-                        text: ['You run your sleeve across the mirror, and notice some of the letters ' +
+            actions: {      //Actions specified by the player
+                wipe: {     //Specific actions like wipe have priority in code over generic actions like touch
+                    none: { //Item used, could be none or something like hammer to interact with the hammer
+                        text: ['You run your sleeve across the mirror, and notice some of the letters ' +   //Text returned on interaction
                         'begin to vanish. You take this as a hint and quickly pick up the speed.',
                             'A jumble of letters is left over, you pick them out and get the word - R A T H E D',
                             'Doesn\'t seem like much of a word...maybe it can be rearranged?'
                         ],
-                        loc_state: {
-                            image: 1,
+                        loc_state: {    //Run after interacting to update things related to this specific location object
+                            image: 1,   //Updates the image to index 1
                         }
                     }
                 },
@@ -66,7 +71,7 @@ db.locations.update({name: 'mirror'}, {
                             'You give the mirror a feeble slap. Doesn\'t seem to do much, but now your hand kind of hurts.'
                         ]
                     },
-                    hammer: {
+                    hammer: {   //Interaction with an object, same code just different handling
                         text: [
                             'The hammer clinks on the mirror. Any more and you might shatter it. Better not.'
                         ]
@@ -74,12 +79,12 @@ db.locations.update({name: 'mirror'}, {
                 },
                 solve: {
                     none: {
-                        solution: 'hatred',
+                        solution: 'hatred', //Check for if you input the correct thing. No cheating!
                         text: [
                             'Through the jumble you rearrange the letters to form the word \'hatred\'. Seems to work.',
                             'You add the word to the chalkboard'
                         ],
-                        state: {
+                        state: {            //Updates the RoomView state with this.setState
                             chalkboard: 0b10000
                         }
                     }
@@ -121,7 +126,7 @@ db.locations.update({name: 'table'}, {
                         text: [
                             'You grab the hammer. Could be useful'
                         ],
-                        inventory: {
+                        inventory: {        //An item added to inventory through explicit 'take'
                             name: 'Hammer',
                             text: 'A hefty looking hammer. Probably good for smashing stuff'
                         },
@@ -203,7 +208,7 @@ db.locations.update({name: 'desk'}, {
                             'The desk smashes open, revealing a piece of paper with a single word. You add it to your inventory...',
                             'Maybe using it on the chalkboard will have some effect?'
                         ],
-                        inventory: {
+                        inventory: {        //An item automatically added through another action
                             name: 'Paper',
                             text: ['A single word is scrawled: \'Hostility\'']
                         },

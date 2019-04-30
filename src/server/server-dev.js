@@ -11,6 +11,7 @@ const app = express(), STATIC = __dirname, STATIC_HTML = path.join(STATIC, 'inde
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
+//Allows webpack to reload on changes
 app.use(webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath
 }));
@@ -18,6 +19,7 @@ app.use(webpackDevMiddleware(compiler, {
 app.use(express.static(STATIC));
 app.use(bodyParser.json());
 
+//Get request for all Location data provided by mongo
 app.get('*/api/locations', (req, res) => {
     db.collection('locations').find().toArray()
         .then(locations => {
@@ -31,6 +33,7 @@ app.get('*/api/locations', (req, res) => {
 
 });
 
+//Generic get request, provides page
 app.get('*', (req, res, next) => {
     compiler.outputFileSystem.readFile(STATIC_HTML, (err, result) => {
         if (err) {
@@ -42,6 +45,10 @@ app.get('*', (req, res, next) => {
     })
 });
 
+//Post handler
+//inventory requests go to handleInventory
+//state requests go to handleState
+//default action is to provide player
 app.post('*/api/players', async (req, res) => {
     const body = req.body;
     console.log(JSON.stringify(body, null, 4));
@@ -79,6 +86,7 @@ app.post('*/api/players', async (req, res) => {
     res.json(player);
 });
 
+//Start server with mongodb
 const PORT = 3000;
 let db;
 MongoClient.connect('mongodb://localhost', {useNewUrlParser: true}).then(connection => {
@@ -129,6 +137,8 @@ let handleState = (req, res, body) => {
         .catch(console.error);
 };
 
+//Mongo queries, I like to separate them from the code for easy editing
+//All return promises
 let insertInventory = (id, item) => {
     let collection = db.collection('players');
     let key = {_id: new ObjectID(id)};

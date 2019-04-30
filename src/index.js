@@ -1,10 +1,11 @@
 import './css/style.css';
 // noinspection ES6UnusedImports
 import RoomView from './js/components/presentation/RoomView.jsx';
+// noinspection ES6UnusedImports
 import WelcomeView from './js/components/presentation/WelcomeView.jsx';
+// noinspection ES6UnusedImports
 import ScoreView from './js/components/presentation/ScoreView.jsx';
 
 
-console.log("Hopefully RExPack works");
-console.log("Test 2");
-console.log("Test 3");
+console.log("RExPack works");
+console.log("Entry Points loaded, server is running");
