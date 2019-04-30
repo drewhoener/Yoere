@@ -8,13 +8,13 @@ const LANG = {
     },
     verb: {
         examine: {
-            lang: ["see", "look", "examine", "observe", "glance"]
+            lang: ["see", "look", "examine", "observe", "glance", "inspect"]
         },
         touch: {
-            lang: ["touch", "feel", "wipe", "open"]
+            lang: ["touch", "feel", "wipe", "open", "use"]
         },
         attack: {
-            lang: ["attack", "smash", "break", "hit", "unlock"],
+            lang: ["attack", "smash", "break", "hit", "unlock", "slap", "hit"],
             handle_incorrect: true
         },
         listen: {
@@ -87,6 +87,12 @@ export const generate_pairs = (input) => {
 
             if (use_obj && !LANG.prep.all().includes(word)) {
                 curSet.obj = word;
+                if (curSet.prep[curSet.prep.length - 1] === 'on') {
+                    //this isn't how languages work but to make it fit with how the parser works we're gonna go with it
+                    //Makes 'hit desk with hammer' and 'use paper on chalkboard' both return object sets where it can parse the data correctly
+                    curSet.obj = curSet.noun;
+                    curSet.noun = word;
+                }
                 break;
             }
 
@@ -94,6 +100,7 @@ export const generate_pairs = (input) => {
                 console.log(`Word is ${word}`);
                 if (!LANG.prep.sub_lang.includes(word))
                     break;
+                curSet.prep.push(word);
                 use_obj = true;
             }
         }

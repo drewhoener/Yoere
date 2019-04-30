@@ -32,22 +32,16 @@ db.locations.update({name: 'mirror'}, {
                 'Mirror.png',
                 'MirrorCleared.png'
             ],
-            flag: 0b10000,
             actions: {
-                solve: 'wipe',
-                object: null,
                 wipe: {
                     none: {
                         text: ['You run your sleeve across the mirror, and notice some of the letters ' +
                         'begin to vanish. You take this as a hint and quickly pick up the speed.',
-                            'After a moment, you notice that only the following letters are left unerased - R A T H E D',
-                            'You are able to rearrange them, forming the word HATRED. You add this word to the chalkboard'
+                            'A jumble of letters is left over, you pick them out and get the word - R A T H E D',
+                            'Doesn\'t seem like much of a word...maybe it can be rearranged?'
                         ],
                         loc_state: {
                             image: 1,
-                        },
-                        state: {
-                            chalkboard: 0b10000
                         }
                     }
                 },
@@ -65,6 +59,30 @@ db.locations.update({name: 'mirror'}, {
                             'You touch the mirror. Be careful not to smudge the letters!'
                         ]
                     }
+                },
+                attack: {
+                    none: {
+                        text: [
+                            'You give the mirror a feeble slap. Doesn\'t seem to do much, but now your hand kind of hurts.'
+                        ]
+                    },
+                    hammer: {
+                        text: [
+                            'The hammer clinks on the mirror. Any more and you might shatter it. Better not.'
+                        ]
+                    }
+                },
+                solve: {
+                    none: {
+                        solution: 'hatred',
+                        text: [
+                            'Through the jumble you rearrange the letters to form the word \'hatred\'. Seems to work.',
+                            'You add the word to the chalkboard'
+                        ],
+                        state: {
+                            chalkboard: 0b10000
+                        }
+                    }
                 }
             }
         }
@@ -76,9 +94,7 @@ db.locations.update({name: 'table'}, {
             name: 'table',
             image: 0,
             images: ['projecttable.png', 'projecttablenohammer.png'],
-            flag: 0b00100,
             actions: {
-                solution: 'darkness',
                 examine: {
                     none: {
                         text: [
@@ -117,6 +133,7 @@ db.locations.update({name: 'table'}, {
                 },
                 solve: {
                     none: {
+                        solution: 'darkness',
                         text: [
                             'After scratching your head for a while you come to the conclusion that the answer must be \'Darkness\'',
                             'You add the word to the chalkboard'
@@ -136,9 +153,7 @@ db.locations.update({name: 'floor'}, {
             name: 'floor',
             image: 0,
             images: ['floor.png'],
-            flag: 0b00010,
             actions: {
-                solution: 'fear',
                 examine: {
                     none: {
                         text: [
@@ -151,6 +166,18 @@ db.locations.update({name: 'floor'}, {
                         text: [
                             'It’s still wet. That was gross.'
                         ]
+                    }
+                },
+                solve: {
+                    none: {
+                        solution: 'fear',
+                        text: [
+                            'The letters are kind of hard to make out but you notice that the word \'fear\' sticks out',
+                            'You add the word to the chalkboard'
+                        ],
+                        state: {
+                            chalkboard: 0b00010
+                        }
                     }
                 }
             }
@@ -166,7 +193,7 @@ db.locations.update({name: 'desk'}, {
                 'projectdesk.png',
                 'projectdeskopen.png'
             ],
-            flag: 0b01000,
+            flag: 0b00010,
             actions: {
                 solve: 'attack',
                 object: 'hammer',
@@ -186,7 +213,7 @@ db.locations.update({name: 'desk'}, {
                     },
                     none: {
                         text: [
-                            'It\'s very well built but one of the drawers seems to be stuck shut. You can\t break it open when your hands'
+                            'It\'s very well built but one of the drawers seems to be stuck shut. You can\'t break it open with your hands'
                         ]
                     }
                 },
@@ -213,8 +240,7 @@ db.locations.update({name: 'bookshelf'}, {
         {
             name: 'bookshelf',
             image: 0,
-            images: [],
-            flag: 0b00001,
+            images: ['projectbookcase.png'],
             actions: {
                 solution: 'loathing',
                 examine: {
@@ -222,7 +248,6 @@ db.locations.update({name: 'bookshelf'}, {
                         text: [
                             'You see a bookcase with quite a few books. You think it may be worth looking through, so you take your time...',
                             'After a bit, you come to the conclusion that the word is either loathing, scarecrow, or jealous. ',
-                            'To solve this puzzle, enter solve [your answer] while standing here'
                         ]
                     }
                 },
@@ -233,6 +258,18 @@ db.locations.update({name: 'bookshelf'}, {
                         ]
                     }
                 },
+                solve: {
+                    none: {
+                        solution: 'loathing',
+                        text: [
+                            'You look through the books, you look at the chalkboard, and it seems like \'loathing\' fits best',
+                            'You add the word to the chalkboard'
+                        ],
+                        state: {
+                            chalkboard: 0b01000
+                        }
+                    }
+                }
             }
         }
 }, {upsert: true});
@@ -255,8 +292,18 @@ db.locations.update({name: 'chalkboard'}, {
                         text: [
                             'Lots of chalk, with a place to write in the words you\'ve discovered.'
                         ]
+                    },
+                    paper: {
+                        text: [
+                            'You bring the paper to the chalkboard and study the lines. You find a space where your word fits perfectly',
+                            'You add it to the chalkboard'
+                        ],
+                        state: {
+                            chalkboard: 0b00001
+                        }
                     }
                 },
+
             }
         }
 }, {upsert: true});

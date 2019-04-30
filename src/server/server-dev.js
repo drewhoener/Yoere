@@ -46,41 +46,11 @@ app.post('*/api/players', async (req, res) => {
     const body = req.body;
     console.log(JSON.stringify(body, null, 4));
     if (body.update === 'inventory') {
-        if (!body.id) {
-            console.error(`Cannot update player with invalid id`);
-            res.status(422).json({message: `Invalid Player ID, cannot update. ${JSON.stringify(body)}`});
-            return;
-        }
-        if (!body.item) {
-            console.error(`Cannot update player with invalid inventory`);
-            res.status(422).json({message: `Invalid Player inventory, cannot update. ${JSON.stringify(body)}`});
-            return;
-        }
-        insertInventory(body.id, body.item)
-            .then(result => {
-                //console.log(`Data is ${result}`);
-                res.json(result);
-            })
-            .catch(console.error);
+        handleInventory(req, res, body);
         return;
     }
     if (body.update === 'states') {
-        if (!body.id) {
-            console.error(`Cannot update player with invalid id`);
-            res.status(422).json({message: `Invalid Player ID, cannot update. ${JSON.stringify(body)}`});
-            return;
-        }
-        if (!body.item) {
-            console.error(`Cannot update player with invalid inventory`);
-            res.status(422).json({message: `Invalid Player inventory, cannot update. ${JSON.stringify(body)}`});
-            return;
-        }
-        insertInventory(body.id, body.item)
-            .then(result => {
-                //console.log(`Data is ${result}`);
-                res.json(result);
-            })
-            .catch(console.error);
+        handleState(req, res, body);
         return;
     }
     if (!body.name) {
@@ -121,13 +91,51 @@ MongoClient.connect('mongodb://localhost', {useNewUrlParser: true}).then(connect
     console.log('ERROR:', error);
 });
 
+let handleInventory = (req, res, body) => {
+    if (!body.id) {
+        console.error(`Cannot update player with invalid id`);
+        res.status(422).json({message: `Invalid Player ID, cannot update. ${JSON.stringify(body)}`});
+        return;
+    }
+    if (!body.item) {
+        console.error(`Cannot update player with invalid inventory`);
+        res.status(422).json({message: `Invalid Player inventory, cannot update. ${JSON.stringify(body)}`});
+        return;
+    }
+    insertInventory(body.id, body.item)
+        .then(result => {
+            //console.log(`Data is ${result}`);
+            res.json(result);
+        })
+        .catch(console.error);
+};
+
+let handleState = (req, res, body) => {
+    if (!body.id) {
+        console.error(`Cannot update player with invalid id`);
+        res.status(422).json({message: `Invalid Player ID, cannot update. ${JSON.stringify(body)}`});
+        return;
+    }
+    if (!body.states) {
+        console.error(`Cannot update player with invalid states`);
+        res.status(422).json({message: `Invalid Player states, cannot update. ${JSON.stringify(body)}`});
+        return;
+    }
+    updatePlayerStates(body.id, body.states)
+        .then(result => {
+            //console.log(`Data is ${result}`);
+            res.json(result);
+        })
+        .catch(console.error);
+};
+
 let insertInventory = (id, item) => {
     let collection = db.collection('players');
     let key = {_id: new ObjectID(id)};
     return collection.updateOne(key, {'$push': {inventory: item}});
 };
 
-let updatePlayer = (id, states) => {
+let updatePlayerStates = (id, states) => {
     let collection = db.collection('players');
     let key = {_id: new ObjectID(id)};
     return collection.updateOne(key, {'$set': states});

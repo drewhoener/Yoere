@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import InputView from "./../container/InputView.jsx";
 import ImageView from "./../container/ImageView.jsx";
-import {isEqual} from "lodash/lang";
+import deepmerge from "deepmerge";
+
+const _ = require('lodash/lang');
 
 class RoomView extends Component {
 
@@ -31,8 +33,10 @@ class RoomView extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!this.state.curLocation || !this.state.locations)
             return;
-        if (this.state.curLocation === 'chalkboard')
+        if (this.state.curLocation === 'chalkboard' && prevState.chalkboard_flag !== this.state.chalkboard_flag) {
+            this.setState({curImage: `chalkboard/${(this.state.chalkboard_flag >>> 0).toString(2).padStart(5, '0')}.png`});
             return;
+        }
         let curLocation = this.state.locations[this.state.curLocation];
         if (!curLocation)
             return;
@@ -74,7 +78,7 @@ class RoomView extends Component {
             this.setState({inputResponse: `You don't seem to have a player associated with you. Try refreshing the page and entering your first name`});
             return;
         }
-        if (this.state.player.inventory.find(inv_item => isEqual(inv_item, item)))
+        if (this.state.player.inventory.find(inv_item => _.isEqual(inv_item, item)))
             return;
         fetch('/api/players', {
             method: 'POST',
@@ -121,6 +125,12 @@ class RoomView extends Component {
         console.log(`Final Action before obj: ${JSON.stringify(final_action, null, 4)}`);
         if (final_action) {
             if (lang.obj && final_action.hasOwnProperty(lang.obj)) {
+                if (!this.state.player.inventory.find(inv_item => inv_item.name.toLowerCase() === lang.obj)) {
+                    if (lang.verb !== 'take') {
+                        this.setState({inputResponse: `You find yourself wanting to use a ${lang.obj} to complete your task, but are disappointed to find you don't have one.`});
+                        return;
+                    }
+                }
                 final_action = final_action[lang.obj];
             } else {
                 final_action = final_action['none'];
@@ -147,6 +157,11 @@ class RoomView extends Component {
                 this.setState({inputResponse: final_action.text});
                 break;
             case 'attack':
+                if (!final_action) {
+                    this.setState({inputResponse: [`Try as you might, your actions don\'t seem to have much effect`]});
+                    return;
+                }
+                this.setState({inputResponse: final_action.text});
                 break;
             case 'listen':
                 if (!final_action) {
@@ -189,14 +204,18 @@ class RoomView extends Component {
                     break;
                 if (!final_action) {
                     this.setState({inputResponse: `You look around trying to grab a ${lang.obj}, but can't seem to find one`});
-                    break;
+                    return;
                 }
                 this.setState({inputResponse: `You grab the ${lang.obj}, thinking it could be useful down the line.`});
                 break;
             case 'solve':
                 if (!final_action) {
+                    this.setState({inputResponse: `Your mind is racing, itching to solve puzzles...but there don't seem to be any here`});
+                    return;
+                }
+                if (lang.noun !== final_action.solution) {
                     this.setState({inputResponse: `After hours of pondering the clues you think you have it...but it doesn't seem to fit on the chalkboard...`});
-                    break;
+                    return;
                 }
                 this.setState({inputResponse: final_action.text});
                 break;
@@ -209,6 +228,17 @@ class RoomView extends Component {
                 this.setState(state => {
                     let newLocs = Object.assign({}, state.locations);
                     Object.assign(newLocs[state.curLocation], final_action.loc_state);
+                    let db_object = {};
+                    for (let key in final_action.loc_state) {
+                        if (!final_action.loc_state.hasOwnProperty(key))
+                            continue;
+                        db_object[`states.locations.${state.curLocation}.${key}`] = final_action.loc_state[key];
+                    }
+                    fetch('/api/players', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({update: 'states', id: this.state.player._id, states: db_object}),
+                    }).catch(console.error);
                     return {
                         locations: newLocs
                     };
@@ -220,6 +250,13 @@ class RoomView extends Component {
                     if (final_action.state.chalkboard) {
                         chalkboard_mod |= final_action.state.chalkboard;
                     }
+                    let db_object = {};
+                    db_object[`states.chalkboard_flag`] = chalkboard_mod;
+                    fetch('/api/players', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({update: 'states', id: this.state.player._id, states: db_object}),
+                    }).catch(console.error);
                     return {
                         chalkboard_flag: chalkboard_mod
                     }
@@ -239,9 +276,18 @@ class RoomView extends Component {
             .then(res => {
                 if (res.ok) {
                     res.json().then(obj => {
-                        this.setState({
-                            player: obj,
-                            inputResponse: `Welcome ${obj.returning ? 'back ' : ''} ${str}. Escape this room...if you can!`
+                        this.setState(state => {
+                            let newState = Object.assign({}, {
+                                chalkboard_flag: state.chalkboard_flag,
+                                locations: state.locations,
+                                player: obj
+                            });
+                            newState.inputResponse = `Welcome ${obj.returning ? 'back ' : ''} ${str}. Escape this room...if you can!`;
+                            if (obj.states) {
+                                newState = deepmerge(newState, obj.states);
+                                console.log(JSON.stringify(newState, null, 4));
+                            }
+                            return newState;
                         });
                     });
                 } else {

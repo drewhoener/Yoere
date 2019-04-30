@@ -74,7 +74,7 @@ class InputView extends Component {
             return;
         }
         let split = str.split(' ');
-        if (split.length === 1) {
+        if (split.length === 1 && !this.props.player) {
             this.props.setName(split[0]);
             input.command.value = '';
             return;
