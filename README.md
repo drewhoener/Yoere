@@ -23,9 +23,9 @@ To use this application you should have `node`, `npm` and `mongodb` installed an
 + src/html: Base HTML files, mostly blank except for React Hooks
 + src/img: Images for the build, copied into dist/img
 + src/js: React components and javascript
-+ src/server: server-dev and server-prod. (Currently server-dev is the only one used)
++ src/server: server-dev, the main server file
 + index.js: Imports from all the react components
-+ Webpack configs: Currently only webpack.dev.config.js is used
++ Webpack configs: Bundles all the stuff together
 
 #Notes
 This app uses lots of large images, so the initial load may be slow.  
