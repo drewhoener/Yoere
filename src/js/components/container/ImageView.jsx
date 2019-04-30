@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import {Image} from "react-bootstrap";
+import {Card, Image} from "react-bootstrap";
 
 class ImageView extends Component {
 
@@ -19,12 +19,26 @@ class ImageView extends Component {
             <div>
                 <Row>
                     <Col className="parent">
-                        <div className="vertical-center light-text">
-                            <h1>Placeholder</h1>
-                            <p className={"text-center"}>
-                                Player Inventory: <br/>
-                                Updated by POST request
-                            </p>
+                        <div className="text-center">
+                            <h1 className={"light-text"}>Inventory</h1>
+                            {
+                                //non-null check
+                                this.props.player !== null &&
+                                this.props.player.inventory.map(item => {
+                                    return (
+                                        <React.Fragment key={item.name}>
+                                            <div className={"extra"}>
+                                                <Card>
+                                                    <Card.Header>{item.name}</Card.Header>
+                                                    <Card.Body>
+                                                        <Card.Text>Description: {item.text ? item.text : "None"}</Card.Text>
+                                                    </Card.Body>
+                                                </Card>
+                                            </div>
+                                        </React.Fragment>
+                                    );
+                                })
+                            }
                         </div>
                     </Col>
                     <Col md={10}>

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {generate_pairs} from "./../../scripts/action_lang";
+import {isEqual} from "lodash/lang";
 
 const BREADCRUMB_MAX = 12;
 
@@ -35,8 +36,12 @@ class InputView extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.scrollRef)
             this.scrollRef.scrollIntoView({behavior: 'smooth'});
-        if (prevProps.inputResponse !== this.props.inputResponse) {
-            this.add_command(this.props.inputResponse, true);
+        if (!isEqual(prevProps.inputResponse, this.props.inputResponse)) {
+            if (Array.isArray(this.props.inputResponse)) {
+                this.props.inputResponse.forEach(item => this.add_command(item, true));
+            } else {
+                this.add_command(this.props.inputResponse, true);
+            }
         }
     }
 
@@ -62,6 +67,12 @@ class InputView extends Component {
         let input = document.forms.commandForm;
         let str = input.command.value;
         //alert(str);
+        let pairs = generate_pairs(str);
+        if (pairs && pairs.verb && !this.props.player) {
+            this.add_command(`I can't parse commands without knowing who you are! Please enter your first name.`, true);
+            input.command.value = '';
+            return;
+        }
         let split = str.split(' ');
         if (split.length === 1) {
             this.props.setName(split[0]);
@@ -70,7 +81,6 @@ class InputView extends Component {
         }
         this.add_command(str);
         input.command.value = '';
-        let pairs = generate_pairs(str);
         console.log(pairs);
         //this.add_command(`You ${str.toLowerCase()}`, true);
         this.validateLang(pairs);

@@ -9,6 +9,7 @@ const JSON = require('circular-json');
 const compiler = webpack(config);
 const app = express(), STATIC = __dirname, STATIC_HTML = path.join(STATIC, 'index.html');
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 
 app.use(webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath
@@ -44,15 +45,54 @@ app.get('*', (req, res, next) => {
 app.post('*/api/players', async (req, res) => {
     const body = req.body;
     console.log(JSON.stringify(body, null, 4));
+    if (body.update === 'inventory') {
+        if (!body.id) {
+            console.error(`Cannot update player with invalid id`);
+            res.status(422).json({message: `Invalid Player ID, cannot update. ${JSON.stringify(body)}`});
+            return;
+        }
+        if (!body.item) {
+            console.error(`Cannot update player with invalid inventory`);
+            res.status(422).json({message: `Invalid Player inventory, cannot update. ${JSON.stringify(body)}`});
+            return;
+        }
+        insertInventory(body.id, body.item)
+            .then(result => {
+                //console.log(`Data is ${result}`);
+                res.json(result);
+            })
+            .catch(console.error);
+        return;
+    }
+    if (body.update === 'states') {
+        if (!body.id) {
+            console.error(`Cannot update player with invalid id`);
+            res.status(422).json({message: `Invalid Player ID, cannot update. ${JSON.stringify(body)}`});
+            return;
+        }
+        if (!body.item) {
+            console.error(`Cannot update player with invalid inventory`);
+            res.status(422).json({message: `Invalid Player inventory, cannot update. ${JSON.stringify(body)}`});
+            return;
+        }
+        insertInventory(body.id, body.item)
+            .then(result => {
+                //console.log(`Data is ${result}`);
+                res.json(result);
+            })
+            .catch(console.error);
+        return;
+    }
     if (!body.name) {
-        console.log("Invalid error");
+        //console.log("Invalid error");
         res.status(422).json({message: `Invalid object format: ${JSON.stringify(body)}`});
         return;
     }
 
-    let player = await getPlayer(body.name)
+    let player = await getPlayer(body.name.toLowerCase())
         .then(data => {
-            console.log(data);
+            if (data)
+                data.returning = true;
             return data;
         })
         .catch(console.error);
@@ -60,17 +100,16 @@ app.post('*/api/players', async (req, res) => {
     if (!player) {
         console.error(`Player not in database, inserting`);
         player = {
-            name: body.name,
+            name: body.name.toLowerCase(),
             inventory: []
         };
-        updatePlayer(player).then(response => console.log(`Set player`)).catch(console.error);
+        insertPlayer(player).then(response => console.log(`Set player`)).catch(console.error);
     }
 
     res.json(player);
 });
 
 const PORT = 3000;
-
 let db;
 MongoClient.connect('mongodb://localhost', {useNewUrlParser: true}).then(connection => {
     db = connection.db('gametracker');
@@ -82,7 +121,19 @@ MongoClient.connect('mongodb://localhost', {useNewUrlParser: true}).then(connect
     console.log('ERROR:', error);
 });
 
-let updatePlayer = (player) => {
+let insertInventory = (id, item) => {
+    let collection = db.collection('players');
+    let key = {_id: new ObjectID(id)};
+    return collection.updateOne(key, {'$push': {inventory: item}});
+};
+
+let updatePlayer = (id, states) => {
+    let collection = db.collection('players');
+    let key = {_id: new ObjectID(id)};
+    return collection.updateOne(key, {'$set': states});
+};
+
+let insertPlayer = (player) => {
     let collection = db.collection('players');
     console.log(`Inserting Player`);
     return collection.insertOne(player);

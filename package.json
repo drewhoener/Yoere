@@ -21,6 +21,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "lodash": "^4.17.11",
     "mongodb": "^3.2.2",
     "run-script-os": "^1.0.5"
   },
