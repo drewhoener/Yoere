@@ -11,16 +11,18 @@ const LANG = {
             lang: ["see", "look", "examine", "observe", "glance"]
         },
         touch: {
-            lang: ["touch", "feel", "examine", "wipe", "open"]
+            lang: ["touch", "feel", "wipe", "open"]
         },
         attack: {
-            lang: ["attack", "smash", "break", "hit"]
+            lang: ["attack", "smash", "break", "hit"],
+            handle_incorrect: true
         },
         listen: {
             lang: ["listen", "hear"]
         },
         move: {
-            lang: ["move", "jump", "walk", "go"]
+            lang: ["move", "jump", "walk", "go"],
+            handle_incorrect: true
         },
         take: {
             lang: ["take", "pick up", "swipe"]
@@ -78,6 +80,8 @@ export const generate_pairs = (input) => {
 
             if (!curSet.noun) {
                 curSet.noun = word;
+                if (LANG.verb.take.lang.includes(curSet.verb))
+                    curSet.obj = word;
                 continue;
             }
 
