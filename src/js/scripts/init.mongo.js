@@ -44,7 +44,7 @@ db.locations.update({name: 'mirror'}, {
                             'You are able to rearrange them, forming the word HATRED. You add this word to the chalkboard'
                         ],
                         loc_state: {
-                            image: 1
+                            image: 1,
                         }
                     }
                 },

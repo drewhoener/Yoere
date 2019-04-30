@@ -14,7 +14,7 @@ const LANG = {
             lang: ["touch", "feel", "wipe", "open"]
         },
         attack: {
-            lang: ["attack", "smash", "break", "hit"],
+            lang: ["attack", "smash", "break", "hit", "unlock"],
             handle_incorrect: true
         },
         listen: {
@@ -25,7 +25,7 @@ const LANG = {
             handle_incorrect: true
         },
         take: {
-            lang: ["take", "pick up", "swipe"]
+            lang: ["take", "pick up", "swipe", "grab", "get"]
         },
         solve: {
             lang: ["solve", "finish"]
