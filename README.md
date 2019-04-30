@@ -6,9 +6,9 @@ A text-based escape room game
 
 # Team Members
 
-+ Zach Schwartz
-+ Thomas Capen
-+ Andrew Hoener
++ Zach Schwartz (Art)
++ Thomas Capen (Story)
++ Andrew Hoener (Code)
 
 # Application Initialization
 
@@ -26,3 +26,10 @@ To use this application you should have `node`, `npm` and `mongodb` installed an
 + src/server: server-dev and server-prod. (Currently server-dev is the only one used)
 + index.js: Imports from all the react components
 + Webpack configs: Currently only webpack.dev.config.js is used
+
+#Notes
+This app uses lots of large images, so the initial load may be slow.  
+Additional performance should come from minifying/uglifying all of the code but
+at this point I haven't bothered to make a webpack config for production, since
+it wasn't used at all during development, and once the initial load is done, performance
+is just fine
