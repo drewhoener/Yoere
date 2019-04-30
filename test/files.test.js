@@ -7,16 +7,19 @@ const fs = require('fs');
 //This is a unit test to help me figure out which ones we missed. Don't judge me.
 describe('files', () => {
     it('detects all files', () => {
+        let missing = [];
         for (let i = 0; i < 32; i++) {
             let string = `./src/img/chalkboard/${(i >>> 0).toString(2).padStart(5, '0')}.png`;
             try {
                 if (!fs.existsSync(string))
-                    console.log(`Missing file ${string}`);
+                    missing.push(`Missing file ${string}`);
                 else
                     console.log(`Found file ${string}`);
             } catch (err) {
                 console.error(err);
             }
         }
+        console.log(`The following files are missing:`);
+        console.log(JSON.stringify(missing, null, 4));
     });
 });
