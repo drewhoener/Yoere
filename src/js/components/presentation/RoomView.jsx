@@ -31,6 +31,8 @@ class RoomView extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!this.state.curLocation || !this.state.locations)
             return;
+        if (this.state.curLocation === 'chalkboard')
+            return;
         let curLocation = this.state.locations[this.state.curLocation];
         if (!curLocation)
             return;
@@ -116,7 +118,7 @@ class RoomView extends Component {
         } else if (curLocation.actions.hasOwnProperty(lang.verb)) {
             final_action = curLocation.actions[lang.verb];
         }
-        //console.log(`Final Action before obj: ${JSON.stringify(final_action, null, 4)}`);
+        console.log(`Final Action before obj: ${JSON.stringify(final_action, null, 4)}`);
         if (final_action) {
             if (lang.obj && final_action.hasOwnProperty(lang.obj)) {
                 final_action = final_action[lang.obj];
@@ -124,7 +126,7 @@ class RoomView extends Component {
                 final_action = final_action['none'];
             }
         }
-        //console.log(`Final Action after obj: ${JSON.stringify(final_action, null, 4)}`);
+        console.log(`Final Action after obj: ${JSON.stringify(final_action, null, 4)}`);
         if (!final_action && lang.handle_incorrect && lang.verb !== 'move') {
             this.setState({inputResponse: 'Try as you might, your actions seem to have no effect'});
             return;
@@ -165,6 +167,7 @@ class RoomView extends Component {
                 if (location.name.toLowerCase() === 'chalkboard') {
                     this.setState(state => ({
                         curImage: `chalkboard/${(state.chalkboard_flag >>> 0).toString(2).padStart(5, '0')}.png`,
+                        curLocation: 'chalkboard',
                         inputResponse: 'You go to the chalkboard'
                     }));
                     break;
@@ -191,6 +194,11 @@ class RoomView extends Component {
                 this.setState({inputResponse: `You grab the ${lang.obj}, thinking it could be useful down the line.`});
                 break;
             case 'solve':
+                if (!final_action) {
+                    this.setState({inputResponse: `After hours of pondering the clues you think you have it...but it doesn't seem to fit on the chalkboard...`});
+                    break;
+                }
+                this.setState({inputResponse: final_action.text});
                 break;
         }
         if (final_action) {
@@ -204,6 +212,17 @@ class RoomView extends Component {
                     return {
                         locations: newLocs
                     };
+                })
+            }
+            if (final_action.state) {
+                this.setState(state => {
+                    let chalkboard_mod = state.chalkboard_flag;
+                    if (final_action.state.chalkboard) {
+                        chalkboard_mod |= final_action.state.chalkboard;
+                    }
+                    return {
+                        chalkboard_flag: chalkboard_mod
+                    }
                 })
             }
         }

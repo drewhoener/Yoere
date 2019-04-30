@@ -45,6 +45,9 @@ db.locations.update({name: 'mirror'}, {
                         ],
                         loc_state: {
                             image: 1,
+                        },
+                        state: {
+                            chalkboard: 0b10000
                         }
                     }
                 },
@@ -110,6 +113,17 @@ db.locations.update({name: 'table'}, {
                             image: 1
                         }
 
+                    }
+                },
+                solve: {
+                    none: {
+                        text: [
+                            'After scratching your head for a while you come to the conclusion that the answer must be \'Darkness\'',
+                            'You add the word to the chalkboard'
+                        ],
+                        state: {
+                            chalkboard: 0b00100
+                        }
                     }
                 }
             }
