@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "buildDev": "run-script-os",
-    "buildDev:darwin:linux": "rm -rf dist && mongo src/js/scripts/init.mongo.js && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
+    "buildDev:darwin:linux": "rm -rf dist && mongo src/js/scripts/init.mongo.js && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js --optimize-minimize",
     "buildDev:win32": "mongo src/js/scripts/init.mongo.js && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js",
     "start": "run-script-os",
     "start:darwin:linux": "node dist/server.js",
