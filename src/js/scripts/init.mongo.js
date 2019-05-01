@@ -5,7 +5,6 @@
 db = new Mongo().getDB('gametracker');
 
 db.locations.remove({});
-db.players.remove({});
 
 db.locations.update({name: 'overhead'}, {
     "$setOnInsert":
@@ -81,7 +80,7 @@ db.locations.update({name: 'mirror'}, {
                     },
                     towel: {
                         text: [
-                            'It\'s a regular towel. You don\'t feel an urge to pick it up.'
+                            'It\'s slightly damp...ew.'
                         ]
                     }
                 },
@@ -244,7 +243,8 @@ db.locations.update({name: 'desk'}, {
                     },
                     none: {
                         text: [
-                            'It\'s very well built but one of the drawers seems to be stuck shut. You can\'t break it open with your hands'
+                            'You punch the locked drawer in frustration. The lock rattles around',
+                            'Something with a bit more force is needed to get in there'
                         ]
                     }
                 },
@@ -258,7 +258,7 @@ db.locations.update({name: 'desk'}, {
                 touch: {
                     none: {
                         text: [
-                            'It\'s very well built but one of the drawers seems to be stuck shut. You can\'t break it open when your hands'
+                            'It\'s very well built but one of the drawers seems to be stuck shut. You can\'t break it open with your hands'
                         ]
                     }
                 }
@@ -327,8 +327,8 @@ db.locations.update({name: 'chalkboard'}, {
             images: [],
             actions: {
                 write: {
-                    solution: 'hostility',
                     none: {
+                        solution: 'hostility',
                         text: [
                             'You bring the paper to the chalkboard and study the lines. You find a space where your word fits perfectly',
                             'You add it to the chalkboard'

@@ -1,4 +1,5 @@
 import './css/style.css';
+import 'bootstrap'
 // noinspection ES6UnusedImports
 import RoomView from './js/components/presentation/RoomView.jsx';
 // noinspection ES6UnusedImports

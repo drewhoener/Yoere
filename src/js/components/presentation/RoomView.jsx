@@ -128,8 +128,6 @@ class RoomView extends Component {
         }
 
         //If the chalkboard flag updates while we're viewing it we have to reload the image
-        console.log(`PrevState: ${JSON.stringify(prevState, null, 4)}`);
-        console.log(`State: ${JSON.stringify(this.state, null, 4)}`);
         if (this.state.curLocation === 'chalkboard' && (prevState.chalkboard_flag !== this.state.chalkboard_flag)) {
             let key = (this.state.chalkboard_flag >>> 0).toString(2).padStart(5, '0');
             if (this.state.chalkboard_flag > 31)
@@ -165,7 +163,12 @@ class RoomView extends Component {
         })
             .then(result => {
                 if (result.ok) {
-
+                    console.log(result.message);
+                    fetch('/api/players', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({update: 'delete', id: this.state.player._id}),
+                    }).catch(console.error);
                 }
             })
             .catch(console.error);
@@ -287,7 +290,7 @@ class RoomView extends Component {
         } else if (curLocation.actions.hasOwnProperty(lang.verb)) {
             final_action = curLocation.actions[lang.verb];
         }
-        console.log(`Final Action before obj: ${JSON.stringify(final_action, null, 4)}`);
+        //console.log(`Final Action before obj: ${JSON.stringify(final_action, null, 4)}`);
         //If they've specified an item to use, find the subcategory here
         if (final_action) {
             if (lang.obj && final_action.hasOwnProperty(lang.obj)) {
@@ -304,7 +307,7 @@ class RoomView extends Component {
                 final_action = final_action['none'];
             }
         }
-        console.log(`Final Action after obj: ${JSON.stringify(final_action, null, 4)}`);
+        //console.log(`Final Action after obj: ${JSON.stringify(final_action, null, 4)}`);
         if (!final_action && lang.handle_incorrect && lang.verb !== 'move') {
             this.addResponse('Try as you might, your actions seem to have no effect');
             return;
@@ -494,7 +497,7 @@ class RoomView extends Component {
                                 //Object.assign doesn't do going into objects within objects, it just overwrites everything
                                 //with the one or two values given. Bad
                                 newState = deepmerge(newState, obj.states);
-                                console.log(JSON.stringify(newState, null, 4));
+                                //console.log(JSON.stringify(newState, null, 4));
                             }
                             return newState;
                         });

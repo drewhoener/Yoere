@@ -33,6 +33,19 @@ app.get('*/api/locations', (req, res) => {
 
 });
 
+app.get('*/api/scores', (req, res) => {
+    db.collection('scores').find().toArray()
+        .then(scores => {
+            const meta = {data_length: scores.length};
+            res.json({_metadata: meta, scores: scores});
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({message: `Internal Server Error: ${err}`});
+        })
+
+});
+
 //Generic get request, provides page
 app.get('*', (req, res, next) => {
     compiler.outputFileSystem.readFile(STATIC_HTML, (err, result) => {
@@ -58,6 +71,10 @@ app.post('*/api/players', async (req, res) => {
     }
     if (body.update === 'states') {
         handleState(req, res, body);
+        return;
+    }
+    if (body.update === 'delete') {
+        handleDelete(req, res, body);
         return;
     }
     if (!body.name) {
@@ -95,13 +112,18 @@ app.post('*/api/scores', async (req, res) => {
         res.status(422).json({message: `Invalid Player ID, cannot update. ${JSON.stringify(body)}`});
         return;
     }
+    if (!body.name) {
+        console.error(`Cannot update player with invalid name`);
+        res.status(422).json({message: `Invalid Player name, cannot update. ${JSON.stringify(body)}`});
+        return;
+    }
     if (!body.time) {
         console.error(`Cannot update player with invalid time`);
         res.status(422).json({message: `Invalid Player time, cannot update. ${JSON.stringify(body)}`});
         return;
     }
 
-    setPlayerTime(body.id, body.time)
+    setPlayerTime(body.id, body.name, body.time)
         .then(result => {
             res.json({message: `Player time stored successfully`, result: result});
         })
@@ -159,10 +181,24 @@ let handleState = (req, res, body) => {
         .catch(console.error);
 };
 
+let handleDelete = (req, res, body) => {
+    if (!body.id) {
+        console.error(`Cannot update player with invalid id`);
+        res.status(422).json({message: `Invalid Player ID, cannot update. ${JSON.stringify(body)}`});
+        return;
+    }
+    deletePlayer(body.id, body.states)
+        .then(result => {
+            //console.log(`Data is ${result}`);
+            res.json(result);
+        })
+        .catch(console.error);
+};
+
 //Mongo queries, I like to separate them from the code for easy editing
 //All return promises
 let setPlayerTime = (id, name, time) => {
-    let collection = db.collection('players');
+    let collection = db.collection('scores');
     let data = {_id: new ObjectID(id), name: name, time: time};
     return collection.insertOne(data);
 };
@@ -182,6 +218,12 @@ let insertPlayer = (player) => {
     let collection = db.collection('players');
     console.log(`Inserting Player`);
     return collection.insertOne(player);
+};
+
+let deletePlayer = (id) => {
+    let collection = db.collection('players');
+    let key = {_id: new ObjectID(id)};
+    return collection.deleteOne(key);
 };
 
 let getPlayer = (name) => {

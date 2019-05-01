@@ -7,6 +7,10 @@
     padding-left: 1em;
 }
 
+.extra-top {
+    padding-top: 1em;
+}
+
 body.welcome {
     background: url("../img/EscapeTheRoomIntro.png") no-repeat center center fixed;
     -webkit-background-size: cover;

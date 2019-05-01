@@ -96,7 +96,7 @@ export const generate_pairs = (input) => {      //Split the input into an object
 
             if (use_obj && !LANG.prep.all().includes(word)) {
                 curSet.obj = word;
-                if (curSet.prep[curSet.prep.length - 1] === 'on') {
+                if (curSet.verb === 'touch' && curSet.prep[curSet.prep.length - 1] === 'on') {
                     //this isn't how languages work but to make it fit with how the parser works we're gonna go with it
                     //Makes 'hit desk with hammer' and 'use paper on chalkboard' both return object sets where it can parse the data correctly
                     curSet.obj = curSet.noun;
