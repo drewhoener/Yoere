@@ -21,6 +21,7 @@ function SuccessModal(props) {
     const hourStr = hours ? `${hours} hour${hours === 1 ? '' : 's'}` : '';
     const minStr = minutes ? `${minutes} minute${minutes === 1 ? '' : 's'}` : '';
     const secStr = `${seconds} second${seconds === 1 ? '' : 's'}`;
+    const needAnd = days > 0 || hours > 0 || minutes > 0;
     return (
         <Modal show={props.show} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
             <Modal.Header closeButton>
@@ -32,12 +33,14 @@ function SuccessModal(props) {
                 <p>
                     You have escaped the room!<br/>
                     Your time
-                    was {`${dayStr} ${hourStr} ${minStr} and ${secStr}`}<br/>
+                    was {`${dayStr} ${hourStr} ${minStr} ${needAnd ? `and` : ``} ${secStr}`}<br/>
                     Your time has been added to the scoreboard, feel free to explore the room, but there is nothing left
                     to do.
                 </p>
             </Modal.Body>
             <Modal.Footer>
+                <Button href={"/"}>Main Menu</Button>
+                <Button href={"/highscore.html"}>High Scores</Button>
                 <Button onClick={props.onHide}>Close</Button>
             </Modal.Footer>
         </Modal>

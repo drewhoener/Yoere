@@ -14,6 +14,7 @@ function ScoreTable(props) {
         <Table className={`light-text`} striped bordered hover variant={"dark"}>
             <thead>
             <tr>
+                <th>Place</th>
                 <th>Name</th>
                 <th>Time</th>
             </tr>
@@ -30,11 +31,13 @@ function ScoreTable(props) {
                     const hourStr = hours ? `${hours} hour${hours === 1 ? '' : 's'}` : '';
                     const minStr = minutes ? `${minutes} minute${minutes === 1 ? '' : 's'}` : '';
                     const secStr = `${seconds} second${seconds === 1 ? '' : 's'}`;
+                    const needAnd = days > 0 || hours > 0 || minutes > 0;
                     const name = score.name.charAt(0).toUpperCase() + score.name.slice(1);
                     return (
                         <tr key={index}>
+                            <th scope={"row"}>{index + 1}</th>
                             <td>{name}</td>
-                            <td>{`${dayStr} ${hourStr} ${minStr} and ${secStr}`}</td>
+                            <td>{`${dayStr} ${hourStr} ${minStr} ${needAnd ? `and` : ``} ${secStr}`}</td>
                         </tr>
                     );
                 })
@@ -78,7 +81,7 @@ class ScoreView extends Component {
                     });
                     //Update our scores
                     setTimeout(() => {
-                        this.setState({scores: scores.sort(), loading: false});
+                        this.setState({scores: scores.sort((a, b) => a.time - b.time), loading: false});
                     }, 2000);
 
                 }).catch(console.error);
