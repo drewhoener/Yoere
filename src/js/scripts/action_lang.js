@@ -17,7 +17,7 @@ const LANG = {
             lang: ["touch", "feel", "wipe", "open", "use", "unlock"]
         },
         attack: {
-            lang: ["attack", "smash", "break", "hit", "slap", "hit"],
+            lang: ["attack", "smash", "break", "hit", "slap", "hit", "punch"],
             handle_incorrect: true                                              //Automatically tell you when you can't use these words
         },
         listen: {
@@ -31,7 +31,7 @@ const LANG = {
             lang: ["take", "pick", "swipe", "grab", "get"]
         },
         solve: {
-            lang: ["solve", "finish", "answer"]
+            lang: ["solve", "finish", "answer", "write"]
         }
     }
 };
@@ -113,5 +113,7 @@ export const generate_pairs = (input) => {      //Split the input into an object
                 use_obj = true;
             }
         }
+    if (curSet.noun && !curSet.obj)
+        curSet.obj = curSet.noun;
     return curSet;
 };

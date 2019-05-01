@@ -16,6 +16,14 @@ db.locations.update({name: 'overhead'}, {
                 'TopDown.png',
             ],
             actions: {
+                examine: {
+                    none: {
+                        text: [
+                            'You notice several suspicious locations around the room',
+                            'If you *go to* them, maybe you\'ll discover something interesting?'
+                        ]
+                    }
+                },
                 touch: {
                     none: {
                         text: [
@@ -54,15 +62,26 @@ db.locations.update({name: 'mirror'}, {
                 examine: {
                     none: {
                         text: [
-                            'You look closely at the mirror, and notice there’s a weird reflection on it, perhaps something else hidden behind the letters that blot out most of the reflection. Do you look into it?' +
+                            'You look closely at the mirror, and notice there’s a weird reflection on it, perhaps something else hidden behind the letters that blot out most of the reflection. Do you look into it?',
                             'Of course you do. You look into the mirror deeply and notice...Your reflection staring back at you.'
+                        ]
+                    },
+                    towel: {
+                        text: [
+                            'It\'s a regular towel. You don\'t feel an urge to pick it up.'
                         ]
                     }
                 },
                 touch: {
                     none: {
                         text: [
-                            'You touch the mirror. Be careful not to smudge the letters!'
+                            'You touch the mirror. Some letters seem wet, while others are dry.',
+                            'What could this mean?'
+                        ]
+                    },
+                    towel: {
+                        text: [
+                            'It\'s a regular towel. You don\'t feel an urge to pick it up.'
                         ]
                     }
                 },
@@ -107,6 +126,12 @@ db.locations.update({name: 'table'}, {
                             'You look at the wall and discover what appears to be a riddle. You think you might be able to *solve* it',
                             'Upon further examination, you notice that the words seem to be written with sharpie. How will they ever get this off the wall?',
                             'The riddle reads "The more places I be, the less you can see. What am I?"'
+                        ]
+                    },
+                    hammer: {
+                        text: [
+                            'On the table there is a hammer someone left behind.',
+                            'Who could forget a perfectly good hammer?'
                         ]
                     }
                 },
@@ -207,7 +232,7 @@ db.locations.update({name: 'desk'}, {
                     hammer: {
                         text: [
                             'The desk smashes open, revealing a piece of paper with a single word. You add it to your inventory...',
-                            'Maybe using it on the chalkboard will have some effect?'
+                            'Maybe *using it* on the chalkboard will have some effect?'
                         ],
                         inventory: {        //An item automatically added through another action
                             name: 'Paper',
@@ -233,7 +258,7 @@ db.locations.update({name: 'desk'}, {
                 touch: {
                     none: {
                         text: [
-                            'It\'s very well built but one of the drawers seems to be stuck shut. You can\t break it open when your hands'
+                            'It\'s very well built but one of the drawers seems to be stuck shut. You can\'t break it open when your hands'
                         ]
                     }
                 }
@@ -253,14 +278,29 @@ db.locations.update({name: 'bookshelf'}, {
                     none: {
                         text: [
                             'You see a bookcase with quite a few books. You think it may be worth looking through, so you take your time...',
-                            'After a bit, you come to the conclusion that the word is either loathing, scarecrow, or jealous. ',
+                            'Something seems a bit off about the shelves...',
                         ]
                     }
                 },
                 touch: {
                     none: {
                         text: [
+                            'The case is well built, very sturdy. As you run your hand along the shelves you feel markings of some sort',
                             'Lots of books, probably for some nerd.'
+                        ]
+                    }
+                },
+                attack: {
+                    none: {
+                        text: [
+                            'You punch the bookcase',
+                            'Through your immense pain you notice letters moving left to right, top to bottom'
+                        ]
+                    },
+                    hammer: {
+                        text: [
+                            'You swing the hammer into the bookcase',
+                            'It teeters...won\'t be trying that again.'
                         ]
                     }
                 },
@@ -286,6 +326,18 @@ db.locations.update({name: 'chalkboard'}, {
             name: 'chalkboard',
             images: [],
             actions: {
+                write: {
+                    solution: 'hostility',
+                    none: {
+                        text: [
+                            'You bring the paper to the chalkboard and study the lines. You find a space where your word fits perfectly',
+                            'You add it to the chalkboard'
+                        ],
+                        state: {
+                            chalkboard: 0b00001
+                        }
+                    }
+                },
                 examine: {
                     none: {
                         text: [
@@ -309,6 +361,18 @@ db.locations.update({name: 'chalkboard'}, {
                         }
                     }
                 },
+                solve: {
+                    none: {
+                        solution: 'horror',
+                        text: [
+                            'With all of the words filled in, you notice a few letters have been underlined, forming a word',
+                            'As you say it aloud, a key falls out of a hidden compartment'
+                        ],
+                        state: {
+                            chalkboard: 0b111111
+                        }
+                    }
+                },
                 take: {
                     key: {
                         text: [
@@ -319,7 +383,7 @@ db.locations.update({name: 'chalkboard'}, {
                             text: 'A solid brass key. Keys usually open things...'
                         },
                         state: {
-                            has_key: true
+                            chalkboard: 0b1111111
                         }
 
                     }

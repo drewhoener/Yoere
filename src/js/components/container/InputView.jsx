@@ -83,6 +83,12 @@ class InputView extends Component {
         e.preventDefault();
         let input = document.forms.commandForm;
         let str = input.command.value;
+        if (str.toLowerCase().startsWith('help')) {
+            input.command.value = '';
+            this.add_command(str);
+            this.props.onLang({verb: 'help'});
+            return;
+        }
         //alert(str);
         //Use our language parser to generate our language object from the input string
         let pairs = generate_pairs(str);

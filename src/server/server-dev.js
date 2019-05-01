@@ -87,6 +87,27 @@ app.post('*/api/players', async (req, res) => {
     res.json(player);
 });
 
+app.post('*/api/scores', async (req, res) => {
+    const body = req.body;
+    console.log(JSON.stringify(body, null, 4));
+    if (!body.id) {
+        console.error(`Cannot update player with invalid id`);
+        res.status(422).json({message: `Invalid Player ID, cannot update. ${JSON.stringify(body)}`});
+        return;
+    }
+    if (!body.time) {
+        console.error(`Cannot update player with invalid time`);
+        res.status(422).json({message: `Invalid Player time, cannot update. ${JSON.stringify(body)}`});
+        return;
+    }
+
+    setPlayerTime(body.id, body.time)
+        .then(result => {
+            res.json({message: `Player time stored successfully`, result: result});
+        })
+        .catch(error => res.status(422).json({message: `Unable to store player time. Error: ${JSON.stringify(error)}`}))
+});
+
 //Start server with mongodb
 const PORT = 3000;
 let db;
@@ -140,6 +161,11 @@ let handleState = (req, res, body) => {
 
 //Mongo queries, I like to separate them from the code for easy editing
 //All return promises
+let setPlayerTime = (id, name, time) => {
+    let collection = db.collection('players');
+    let data = {_id: new ObjectID(id), name: name, time: time};
+    return collection.insertOne(data);
+};
 let insertInventory = (id, item) => {
     let collection = db.collection('players');
     let key = {_id: new ObjectID(id)};

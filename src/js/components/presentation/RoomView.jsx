@@ -6,46 +6,70 @@ import deepmerge from "deepmerge";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
+const events = require('events');
 const _ = require('lodash/lang');
 
 //React hook for a popup modal
-function successModal(props) {
-    const start = props.player.start_time;
-    const now = Date.now();
+function SuccessModal(props) {
+    let now = props.player ? props.player.endTime : Date.now();
+    let start = props.player ? props.player.start_time : Date.now();
     const days = parseInt((now - start) / (1000 * 60 * 60 * 24));
     const hours = parseInt(Math.abs(now - start) / (1000 * 60 * 60) % 24);
     const minutes = parseInt(Math.abs(now - start) / (1000 * 60) % 60);
     const seconds = parseInt(Math.abs(now - start) / (1000) % 60);
-    fetch('/api/scores', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({update: 'states', id: props.player._id, time: (now - start)}),
-    })
-        .then(result => {
-            if (result.ok) {
-
-            }
-        })
-        .catch(console.error);
+    const dayStr = days ? `${days} day${days === 1 ? '' : 's'}` : '';
+    const hourStr = hours ? `${hours} hour${hours === 1 ? '' : 's'}` : '';
+    const minStr = minutes ? `${minutes} minute${minutes === 1 ? '' : 's'}` : '';
+    const secStr = `${seconds} second${seconds === 1 ? '' : 's'}`;
     return (
-        <Modal {...this.props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+        <Modal show={props.show} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
                     Congratulations!
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <h4>Congratulations!</h4>
                 <p>
                     You have escaped the room!<br/>
                     Your time
-                    was {`${days} day(s), ${hours} hour(s), ${minutes} minute(s), and ${seconds} second(s)`}<br/>
+                    was {`${dayStr} ${hourStr} ${minStr} and ${secStr}`}<br/>
                     Your time has been added to the scoreboard, feel free to explore the room, but there is nothing left
                     to do.
                 </p>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={this.props.onHide}>Close</Button>
+                <Button onClick={props.onHide}>Close</Button>
+            </Modal.Footer>
+        </Modal>
+    );
+}
+
+//React hook for a popup modal
+function HelpModal(props) {
+    return (
+        <Modal show={props.show} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Room Help
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>
+                    Welcome to the room!<br/>
+                    The input runs on simple commands <br/>
+                    For example 'Do thing' 'Do thing to thing', 'Do thing on thing' or 'Do thing with thing'<br/>
+                    To get around you can run commands like 'go to place', 'move to place' or some variation of
+                    that.<br/>
+                    You can use words like smash, attack, examine, look at, touch, grab, and pick up, along with other
+                    related words.<br/>
+                    Some puzzles have to be solved in their location while others require using items on different items<br/>
+                    To solve a puzzle, you can use 'solve' or 'answer' followed by your guess. <br/>
+                    The responses to your commands often contain hints, make sure to read them thoroughly!<br/>
+                    Good Luck!
+                </p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={props.onHide}>Close</Button>
             </Modal.Footer>
         </Modal>
     );
@@ -65,12 +89,16 @@ class RoomView extends Component {
             curImage: 'TopDown.png',        //Current Image, used by ImageView
             curLocation: null,              //Current Location in room, the object key not the object itself because it frequently updates
             chalkboard_flag: 0b00000,       //The current binary code for the chalkboard. See the tests if you're wondering why
-            has_key: false,
             finished: false,
             player: null                    //The current player, gotten via POST
         };
+        this.emitter = new events.EventEmitter();
+        this.emitter.on('GameFinished', (player) => this.endGame(player));
+        this.endGame = this.endGame.bind(this);
         this.onLang = this.onLang.bind(this);
         this.setName = this.setName.bind(this);
+        this.hideFinishModal = this.hideFinishModal.bind(this);
+        this.hideHelpModal = this.hideHelpModal.bind(this);
     }
 
     componentDidMount() {
@@ -83,7 +111,7 @@ class RoomView extends Component {
             inputResponse: [
                 `Welcome to the room! You must escape by any means necessary.`,
                 `A helpful keyword is solve [answer] for some of the more abstract puzzles`,
-                `To come back to this overhead, type \'go to overhead\' at any point.`,
+                `To come back to this overhead, type \'go to overhead\' at any point. If you need help, type \'help\'`,
                 `To start, type in your first name`
             ]
         });
@@ -94,14 +122,17 @@ class RoomView extends Component {
         if (!this.state.curLocation || !this.state.locations)
             return;
 
-        if (this.state.finished) {
-
+        if (this.state.finished && !prevState.finished) {
+            this.emitter.emit('GameFinished', this.state.player);
+            return;
         }
 
         //If the chalkboard flag updates while we're viewing it we have to reload the image
-        if (this.state.curLocation === 'chalkboard' && (prevState.chalkboard_flag !== this.state.chalkboard_flag || prevState.has_key !== this.state.has_key)) {
+        console.log(`PrevState: ${JSON.stringify(prevState, null, 4)}`);
+        console.log(`State: ${JSON.stringify(this.state, null, 4)}`);
+        if (this.state.curLocation === 'chalkboard' && (prevState.chalkboard_flag !== this.state.chalkboard_flag)) {
             let key = (this.state.chalkboard_flag >>> 0).toString(2).padStart(5, '0');
-            if (this.state.has_key)
+            if (this.state.chalkboard_flag > 31)
                 key.padEnd(6, '1');
             this.setState({curImage: `chalkboard/${key}.png`});
             return;
@@ -114,6 +145,38 @@ class RoomView extends Component {
         //If the image has changed, re-render it
         if (locImage && locImage !== this.state.curImage)
             this.setState({curImage: locImage});
+    }
+
+    endGame(player) {
+        const start = player.start_time;
+        const now = Date.now();
+        this.setState(state => {
+            let newPlayer = Object.assign({}, state.player);
+            newPlayer.endTime = now;
+            return {
+                player: newPlayer,
+                showFinish: true
+            };
+        });
+        fetch('/api/scores', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({id: player._id, name: player.name, time: (now - start)}),
+        })
+            .then(result => {
+                if (result.ok) {
+
+                }
+            })
+            .catch(console.error);
+    }
+
+    hideFinishModal() {
+        this.setState({showFinish: false});
+    }
+
+    hideHelpModal() {
+        this.setState({showHelp: false});
     }
 
     //Load ALL the data
@@ -203,6 +266,10 @@ class RoomView extends Component {
     //Handle all language events from InputView
     //It all cascades to here
     onLang(lang) {
+        if (lang && lang.verb === 'help') {
+            this.setState({showHelp: true});
+            return;
+        }
         //Setting up some variables
         let images = null;
         let curLocation = this.state.locations[this.state.curLocation]; //Actually get the object of our current loc.
@@ -226,7 +293,7 @@ class RoomView extends Component {
             if (lang.obj && final_action.hasOwnProperty(lang.obj)) {
                 //Obviously if they don't have the item, they can't use it
                 if (!this.state.player.inventory.find(inv_item => inv_item.name.toLowerCase() === lang.obj)) {
-                    if (lang.verb !== 'take') {
+                    if (lang.verb !== 'take' && (lang.verb !== 'touch' && lang.noun !== lang.obj)) {
                         this.addResponse(`You find yourself wanting to use a ${lang.obj} to complete your task, but are disappointed to find you don't have one.`);
                         return;
                     }
@@ -285,7 +352,7 @@ class RoomView extends Component {
                 if (location.name.toLowerCase() === 'chalkboard') {
                     this.setState(state => {
                         let key = (this.state.chalkboard_flag >>> 0).toString(2).padStart(5, '0');
-                        if (this.state.has_key) {
+                        if (this.state.chalkboard_flag > 31) {
                             key = key.padEnd(6, '1');
                         }
                         return {
@@ -373,18 +440,13 @@ class RoomView extends Component {
             if (final_action.state) {
                 this.setState(state => {
                     let chalkboard_mod = state.chalkboard_flag;
-                    let key = state.has_key;
                     //Use bitwise OR to calculate the new flag to use
                     if (final_action.state.chalkboard) {
                         chalkboard_mod |= final_action.state.chalkboard;
                     }
-                    if (final_action.state.has_key) {
-                        key = final_action.state.has_key;
-                    }
                     //Prepare our DB object the same way as before (above)
                     let db_object = {};
                     db_object[`states.chalkboard_flag`] = chalkboard_mod;
-                    db_object[`states.has_key`] = key;
                     //Post it to be updated in Mongo
                     fetch('/api/players', {
                         method: 'POST',
@@ -393,7 +455,7 @@ class RoomView extends Component {
                     }).catch(console.error);
                     return {
                         chalkboard_flag: chalkboard_mod,
-                        has_key: key
+                        finished: !!final_action.state.finished
                     }
                 })
             }
@@ -452,6 +514,15 @@ class RoomView extends Component {
                 <ImageView curImage={this.state.curImage} player={this.state.player}/>
                 <InputView setName={this.setName} onLang={this.onLang} inputResponse={this.state.inputResponse}
                            player={this.state.player}/>
+                <SuccessModal
+                    show={this.state.showFinish}
+                    onHide={this.hideFinishModal}
+                    player={this.state.player}
+                />
+                <HelpModal
+                    show={this.state.showHelp}
+                    onHide={this.hideHelpModal}
+                />
             </div>
         );
     }
